@@ -1,5 +1,6 @@
 \
 #include "../common.h"
+#include "convertor.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,7 +24,31 @@ void* preproc_thread(void *arg){
         char *p = line;
         while(*p && isspace((unsigned char)*p)) p++;
         if(*p==0){ free(line); continue; }
-        // parse: ts,bytes_sent,bytes_recv
+        // If the incoming line looks like JSON (has a '{' or the export_bytes key),
+        // parse it into a C data structure and forward a normalized CSV line to
+        // the next queue. Otherwise fall back to the old CSV parsing logic.
+        if(strchr(p, '{') != NULL || strstr(p, "export_bytes") != NULL){
+            data_point_t dp;
+            int ok = convert_json_to_datapoint(p, &dp);
+            if(!ok){
+                fprintf(logf, "JSON parse failed: %s\n", p);
+                fflush(logf);
+                queue_push(&error_queue, p);
+                free(line);
+                continue;
+            }
+            /* produce a normalized CSV line: timestamp,export_bytes,export_flows,export_packets,export_rtr,export_rtt,export_srt */
+            char out[256];
+            long long ts = (long long)dp.timestamp;
+            snprintf(out, sizeof(out), "%lld,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f",
+                ts,
+                dp.export_bytes, dp.export_flows, dp.export_packets,
+                dp.export_rtr, dp.export_rtt, dp.export_srt);
+            queue_push(&proc_queue, out);
+            free(line);
+            continue;
+        }
+        /* parse: ts,bytes_sent,bytes_recv */
         long long ts=0;
         int bs=-1, br=-1;
         int fields = sscanf(p, "%lld,%d,%d", &ts, &bs, &br);
