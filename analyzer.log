@@ -1,0 +1,2922 @@
+Simple receiver listening on UDP port 9000
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619255100
+export_bytes: 40433.972656
+export_flows: 9.953333
+export_packets: 74.413330
+export_rtr: 0.061611
+export_rtt: 12878.551758
+export_srt: 69253.257812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619255400
+export_bytes: 30678.664062
+export_flows: 9.953333
+export_packets: 62.509998
+export_rtr: 0.026432
+export_rtt: 11896.040039
+export_srt: 54400.968750
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619255700
+export_bytes: 31618.500000
+export_flows: 10.030000
+export_packets: 63.700001
+export_rtr: 0.039261
+export_rtt: 15789.211914
+export_srt: 64589.882812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619256000
+export_bytes: 30543.109375
+export_flows: 10.260000
+export_packets: 63.436668
+export_rtr: 0.016495
+export_rtt: 10402.000000
+export_srt: 67141.515625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619256300
+export_bytes: 30203.136719
+export_flows: 10.010000
+export_packets: 62.240002
+export_rtr: 0.055437
+export_rtt: 12430.448242
+export_srt: 55775.906250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619256600
+export_bytes: 30106.767578
+export_flows: 9.936666
+export_packets: 60.840000
+export_rtr: 0.009901
+export_rtt: 16190.353516
+export_srt: 68595.484375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619256900
+export_bytes: 31986.312500
+export_flows: 10.186666
+export_packets: 64.760002
+export_rtr: 0.038961
+export_rtt: 13631.574219
+export_srt: 56922.941406
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619257200
+export_bytes: 30693.962891
+export_flows: 10.200000
+export_packets: 63.436668
+export_rtr: 0.010395
+export_rtt: 12416.716797
+export_srt: 64704.257812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619257500
+export_bytes: 31366.683594
+export_flows: 9.803333
+export_packets: 62.666668
+export_rtr: 0.133333
+export_rtt: 21599.144531
+export_srt: 66401.523438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619257800
+export_bytes: 30118.335938
+export_flows: 10.003333
+export_packets: 61.830002
+export_rtr: 0.011521
+export_rtt: 11332.960938
+export_srt: 67799.664062
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619258100
+export_bytes: 40970.230469
+export_flows: 10.140000
+export_packets: 72.849998
+export_rtr: 0.037815
+export_rtt: 11488.594727
+export_srt: 69786.921875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619258400
+export_bytes: 32307.117188
+export_flows: 10.190000
+export_packets: 64.526665
+export_rtr: 0.013245
+export_rtt: 17252.085938
+export_srt: 66541.687500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619258700
+export_bytes: 40280.671875
+export_flows: 9.696667
+export_packets: 73.099998
+export_rtr: 0.077586
+export_rtt: 32224.324219
+export_srt: 88146.812500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619259000
+export_bytes: 30817.906250
+export_flows: 10.176666
+export_packets: 63.209999
+export_rtr: 0.002141
+export_rtt: 14221.277344
+export_srt: 60119.207031
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619259300
+export_bytes: 31047.287109
+export_flows: 10.060000
+export_packets: 63.763332
+export_rtr: 0.063877
+export_rtt: 13632.027344
+export_srt: 61918.656250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619259600
+export_bytes: 31552.119141
+export_flows: 10.110000
+export_packets: 63.790001
+export_rtr: 0.013605
+export_rtt: 21773.085938
+export_srt: 68135.945312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619259900
+export_bytes: 30211.429688
+export_flows: 10.040000
+export_packets: 62.080002
+export_rtr: 0.061269
+export_rtt: 18606.283203
+export_srt: 68107.101562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619260200
+export_bytes: 30237.349609
+export_flows: 9.940000
+export_packets: 61.459999
+export_rtr: 0.032710
+export_rtt: 15701.457031
+export_srt: 132597.765625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619260500
+export_bytes: 32286.703125
+export_flows: 10.153334
+export_packets: 64.533333
+export_rtr: 0.049107
+export_rtt: 19180.050781
+export_srt: 61743.386719
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619260800
+export_bytes: 30449.640625
+export_flows: 10.243333
+export_packets: 62.930000
+export_rtr: 0.017964
+export_rtt: 12490.193359
+export_srt: 54289.187500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619261100
+export_bytes: 30814.552734
+export_flows: 9.936666
+export_packets: 61.956665
+export_rtr: 0.092500
+export_rtt: 21340.117188
+export_srt: 73700.179688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619261400
+export_bytes: 30058.769531
+export_flows: 10.020000
+export_packets: 62.090000
+export_rtr: 0.009009
+export_rtt: 13067.076172
+export_srt: 63791.902344
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619261700
+export_bytes: 40750.226562
+export_flows: 10.076667
+export_packets: 72.580002
+export_rtr: 0.042644
+export_rtt: 18220.000000
+export_srt: 60511.054688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619262000
+export_bytes: 30727.556641
+export_flows: 10.190000
+export_packets: 63.623333
+export_rtr: 0.014925
+export_rtt: 19035.123047
+export_srt: 59989.828125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619262300
+export_bytes: 40059.593750
+export_flows: 9.716666
+export_packets: 71.943336
+export_rtr: 0.076923
+export_rtt: 20052.349609
+export_srt: 78912.453125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619262600
+export_bytes: 30643.769531
+export_flows: 10.160000
+export_packets: 62.709999
+export_rtr: 0.008475
+export_rtt: 16059.543945
+export_srt: 55028.687500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619262900
+export_bytes: 30598.707031
+export_flows: 10.026667
+export_packets: 62.896667
+export_rtr: 0.043384
+export_rtt: 14109.794922
+export_srt: 58162.296875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619263200
+export_bytes: 30100.619141
+export_flows: 9.950000
+export_packets: 61.603333
+export_rtr: 0.036145
+export_rtt: 12832.014648
+export_srt: 66456.835938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619263500
+export_bytes: 30208.664062
+export_flows: 9.800000
+export_packets: 61.346668
+export_rtr: 0.067146
+export_rtt: 15997.477539
+export_srt: 119516.289062
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619263800
+export_bytes: 30459.199219
+export_flows: 10.183333
+export_packets: 63.029999
+export_rtr: 0.004228
+export_rtt: 14897.342773
+export_srt: 68342.007812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619264100
+export_bytes: 31883.726562
+export_flows: 9.976666
+export_packets: 63.340000
+export_rtr: 0.040767
+export_rtt: 17805.425781
+export_srt: 66531.421875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619264400
+export_bytes: 30108.703125
+export_flows: 9.836667
+export_packets: 61.623333
+export_rtr: 0.018692
+export_rtt: 13650.478516
+export_srt: 62706.519531
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619264700
+export_bytes: 30640.462891
+export_flows: 10.056666
+export_packets: 63.113335
+export_rtr: 0.057816
+export_rtt: 14056.388672
+export_srt: 64221.574219
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619265000
+export_bytes: 30225.980469
+export_flows: 9.906667
+export_packets: 61.930000
+export_rtr: 0.027335
+export_rtt: 12252.713867
+export_srt: 60432.578125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619265300
+export_bytes: 40716.738281
+export_flows: 10.200000
+export_packets: 73.156670
+export_rtr: 0.040598
+export_rtt: 14475.387695
+export_srt: 64897.039062
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619265600
+export_bytes: 30484.759766
+export_flows: 10.186666
+export_packets: 63.206665
+export_rtr: 0.014799
+export_rtt: 12608.773438
+export_srt: 63058.089844
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619265900
+export_bytes: 40481.953125
+export_flows: 9.956667
+export_packets: 74.246666
+export_rtr: 0.055556
+export_rtt: 11599.023438
+export_srt: 87385.687500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619266200
+export_bytes: 30815.396484
+export_flows: 10.116667
+export_packets: 63.936668
+export_rtr: 0.029474
+export_rtt: 12962.004883
+export_srt: 57039.312500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619266500
+export_bytes: 30533.302734
+export_flows: 9.766666
+export_packets: 62.389999
+export_rtr: 0.055556
+export_rtt: 17003.019531
+export_srt: 65477.078125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619266800
+export_bytes: 30323.250000
+export_flows: 9.990000
+export_packets: 62.389999
+export_rtr: 0.042654
+export_rtt: 12360.774414
+export_srt: 72006.273438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619267100
+export_bytes: 32640.250000
+export_flows: 10.033334
+export_packets: 64.343330
+export_rtr: 0.050239
+export_rtt: 16149.753906
+export_srt: 71455.148438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619267400
+export_bytes: 30433.255859
+export_flows: 10.103333
+export_packets: 62.333332
+export_rtr: 0.036199
+export_rtt: 15405.367188
+export_srt: 74691.593750
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619267700
+export_bytes: 31831.675781
+export_flows: 10.176666
+export_packets: 63.873333
+export_rtr: 0.041667
+export_rtt: 18964.730469
+export_srt: 62602.746094
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619268000
+export_bytes: 30352.503906
+export_flows: 9.876667
+export_packets: 62.233334
+export_rtr: 0.024272
+export_rtt: 16143.868164
+export_srt: 76520.710938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619268300
+export_bytes: 30566.939453
+export_flows: 9.636666
+export_packets: 61.523335
+export_rtr: 0.064426
+export_rtt: 20695.683594
+export_srt: 70763.539062
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619268600
+export_bytes: 34082.472656
+export_flows: 10.470000
+export_packets: 67.613335
+export_rtr: 0.030019
+export_rtt: 20717.314453
+export_srt: 57567.175781
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619268900
+export_bytes: 41044.757812
+export_flows: 10.310000
+export_packets: 74.349998
+export_rtr: 0.035644
+export_rtt: 13665.901367
+export_srt: 49171.683594
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619269200
+export_bytes: 30075.939453
+export_flows: 9.863334
+export_packets: 61.040001
+export_rtr: 0.018041
+export_rtt: 21744.363281
+export_srt: 81722.296875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619269500
+export_bytes: 41625.039062
+export_flows: 10.230000
+export_packets: 77.860001
+export_rtr: 0.047930
+export_rtt: 13565.849609
+export_srt: 59638.257812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619269800
+export_bytes: 30640.437500
+export_flows: 10.103333
+export_packets: 62.529999
+export_rtr: 0.019651
+export_rtt: 13073.698242
+export_srt: 52121.464844
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619270100
+export_bytes: 30928.904297
+export_flows: 10.160000
+export_packets: 63.986668
+export_rtr: 0.044681
+export_rtt: 11921.735352
+export_srt: 59943.457031
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619270400
+export_bytes: 30134.003906
+export_flows: 9.970000
+export_packets: 61.746666
+export_rtr: 0.031026
+export_rtt: 13488.674805
+export_srt: 68694.390625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619270700
+export_bytes: 170718.109375
+export_flows: 10.116667
+export_packets: 200.773331
+export_rtr: 0.050955
+export_rtt: 12998.669922
+export_srt: 57866.710938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619271000
+export_bytes: 29822.246094
+export_flows: 9.760000
+export_packets: 60.046665
+export_rtr: 0.031250
+export_rtt: 15334.888672
+export_srt: 61480.382812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619271300
+export_bytes: 31082.396484
+export_flows: 9.790000
+export_packets: 61.203335
+export_rtr: 0.057637
+export_rtt: 28775.134766
+export_srt: 75486.414062
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619271600
+export_bytes: 30606.160156
+export_flows: 10.213333
+export_packets: 63.096668
+export_rtr: 0.014675
+export_rtt: 13860.044922
+export_srt: 69781.171875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619271900
+export_bytes: 30697.060547
+export_flows: 10.046667
+export_packets: 62.950001
+export_rtr: 0.052980
+export_rtt: 14801.813477
+export_srt: 53556.308594
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619272200
+export_bytes: 38976.734375
+export_flows: 9.880000
+export_packets: 70.486664
+export_rtr: 0.017588
+export_rtt: 15873.668945
+export_srt: 112667.953125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619272500
+export_bytes: 40484.019531
+export_flows: 10.076667
+export_packets: 72.176666
+export_rtr: 0.043011
+export_rtt: 14447.721680
+export_srt: 53434.382812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619272800
+export_bytes: 30316.130859
+export_flows: 10.000000
+export_packets: 62.133335
+export_rtr: 0.031111
+export_rtt: 18261.882812
+export_srt: 66196.164062
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619273100
+export_bytes: 40744.828125
+export_flows: 10.163333
+export_packets: 75.526665
+export_rtr: 0.048936
+export_rtt: 9782.143555
+export_srt: 65695.210938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619273400
+export_bytes: 30813.886719
+export_flows: 10.233334
+export_packets: 63.599998
+export_rtr: 0.012270
+export_rtt: 12125.039062
+export_srt: 57366.960938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619273700
+export_bytes: 30941.953125
+export_flows: 10.166667
+export_packets: 64.190002
+export_rtr: 0.039832
+export_rtt: 12546.447266
+export_srt: 54854.933594
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619274000
+export_bytes: 53716.777344
+export_flows: 10.380000
+export_packets: 85.903336
+export_rtr: 0.039735
+export_rtt: 16406.396484
+export_srt: 62388.656250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619274300
+export_bytes: 30288.990234
+export_flows: 9.980000
+export_packets: 62.416668
+export_rtr: 0.056650
+export_rtt: 17628.371094
+export_srt: 68708.382812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619274600
+export_bytes: 31291.060547
+export_flows: 10.006667
+export_packets: 63.393333
+export_rtr: 0.014286
+export_rtt: 14042.846680
+export_srt: 64025.550781
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619274900
+export_bytes: 31477.156250
+export_flows: 10.023334
+export_packets: 63.373333
+export_rtr: 0.039443
+export_rtt: 15724.246094
+export_srt: 63509.570312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619275200
+export_bytes: 30404.712891
+export_flows: 10.153334
+export_packets: 62.723331
+export_rtr: 0.015453
+export_rtt: 14336.952148
+export_srt: 58401.980469
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619275500
+export_bytes: 30822.330078
+export_flows: 9.963333
+export_packets: 62.820000
+export_rtr: 0.042986
+export_rtt: 14201.955078
+export_srt: 60750.582031
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619275800
+export_bytes: 29938.833984
+export_flows: 9.826667
+export_packets: 61.053333
+export_rtr: 0.030075
+export_rtt: 16622.226562
+export_srt: 63670.765625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619276100
+export_bytes: 40441.648438
+export_flows: 9.953333
+export_packets: 71.216667
+export_rtr: 0.044010
+export_rtt: 22053.113281
+export_srt: 59429.417969
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619276400
+export_bytes: 30591.707031
+export_flows: 10.223333
+export_packets: 63.376667
+export_rtr: 0.038055
+export_rtt: 12917.921875
+export_srt: 51848.953125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619276700
+export_bytes: 63711.421875
+export_flows: 9.923333
+export_packets: 83.239998
+export_rtr: 1.919271
+export_rtt: 20297.119141
+export_srt: 158359.140625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619277000
+export_bytes: 31137.744141
+export_flows: 9.976666
+export_packets: 65.203331
+export_rtr: 0.027160
+export_rtt: 20721.552734
+export_srt: 78846.750000
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619277300
+export_bytes: 31330.179688
+export_flows: 10.093333
+export_packets: 63.900002
+export_rtr: 0.052154
+export_rtt: 27793.111328
+export_srt: 64766.835938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619277600
+export_bytes: 30168.414062
+export_flows: 9.843333
+export_packets: 61.576668
+export_rtr: 0.015748
+export_rtt: 19796.931641
+export_srt: 93761.945312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619277900
+export_bytes: 30384.095703
+export_flows: 10.080000
+export_packets: 62.753334
+export_rtr: 0.076419
+export_rtt: 11642.493164
+export_srt: 53330.347656
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619278200
+export_bytes: 30023.390625
+export_flows: 9.950000
+export_packets: 61.193333
+export_rtr: 0.023923
+export_rtt: 17344.587891
+export_srt: 59826.714844
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619278500
+export_bytes: 31424.919922
+export_flows: 9.920000
+export_packets: 62.433334
+export_rtr: 0.056555
+export_rtt: 19305.687500
+export_srt: 117260.445312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619278800
+export_bytes: 30659.410156
+export_flows: 10.083333
+export_packets: 63.410000
+export_rtr: 0.011312
+export_rtt: 13998.317383
+export_srt: 54344.406250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619279100
+export_bytes: 30960.580078
+export_flows: 10.166667
+export_packets: 63.756668
+export_rtr: 0.042553
+export_rtt: 13444.334961
+export_srt: 52381.523438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619279400
+export_bytes: 30252.423828
+export_flows: 9.960000
+export_packets: 61.480000
+export_rtr: 0.029851
+export_rtt: 15663.356445
+export_srt: 71769.070312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619279700
+export_bytes: 40731.429688
+export_flows: 10.106667
+export_packets: 73.353333
+export_rtr: 0.081498
+export_rtt: 16211.048828
+export_srt: 62139.464844
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619280000
+export_bytes: 30384.300781
+export_flows: 10.103333
+export_packets: 62.376667
+export_rtr: 0.015873
+export_rtt: 13547.876953
+export_srt: 55581.421875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619280300
+export_bytes: 40103.785156
+export_flows: 9.996667
+export_packets: 71.739998
+export_rtr: 0.041475
+export_rtt: 11635.315430
+export_srt: 59406.277344
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619280600
+export_bytes: 51998.226562
+export_flows: 10.400000
+export_packets: 94.233330
+export_rtr: 0.026749
+export_rtt: 13931.990234
+export_srt: 49310.519531
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619280900
+export_bytes: 30760.826172
+export_flows: 9.923333
+export_packets: 62.766666
+export_rtr: 0.045249
+export_rtt: 17497.734375
+export_srt: 53303.421875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619281200
+export_bytes: 30246.470703
+export_flows: 9.903334
+export_packets: 62.310001
+export_rtr: 0.011792
+export_rtt: 15667.370117
+export_srt: 64816.648438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619281500
+export_bytes: 31832.306641
+export_flows: 10.216666
+export_packets: 64.276665
+export_rtr: 0.101322
+export_rtt: 17450.708984
+export_srt: 63819.667969
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619281800
+export_bytes: 30685.240234
+export_flows: 10.123333
+export_packets: 63.503334
+export_rtr: 0.039911
+export_rtt: 18243.193359
+export_srt: 59158.859375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619282100
+export_bytes: 32625.613281
+export_flows: 10.163333
+export_packets: 65.526665
+export_rtr: 0.004357
+export_rtt: 15145.550781
+export_srt: 59840.917969
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619282400
+export_bytes: 30482.267578
+export_flows: 10.176666
+export_packets: 63.113335
+export_rtr: 0.019190
+export_rtt: 12306.323242
+export_srt: 53453.667969
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619282700
+export_bytes: 30691.746094
+export_flows: 9.830000
+export_packets: 62.793335
+export_rtr: 0.027295
+export_rtt: 17895.921875
+export_srt: 59964.878906
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619283000
+export_bytes: 30144.476562
+export_flows: 9.933333
+export_packets: 61.689999
+export_rtr: 0.026699
+export_rtt: 14569.890625
+export_srt: 67569.679688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619283300
+export_bytes: 40643.535156
+export_flows: 10.156667
+export_packets: 72.029999
+export_rtr: 0.029545
+export_rtt: 22099.005859
+export_srt: 67581.500000
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619283600
+export_bytes: 30485.957031
+export_flows: 10.046667
+export_packets: 62.123333
+export_rtr: 0.007160
+export_rtt: 24062.390625
+export_srt: 68327.187500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619283900
+export_bytes: 40185.339844
+export_flows: 10.100000
+export_packets: 72.013336
+export_rtr: 0.023810
+export_rtt: 12952.717773
+export_srt: 60570.421875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619284200
+export_bytes: 31458.939453
+export_flows: 10.166667
+export_packets: 66.779999
+export_rtr: 0.031603
+export_rtt: 16755.533203
+export_srt: 61071.281250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619284500
+export_bytes: 31337.123047
+export_flows: 10.266666
+export_packets: 65.353333
+export_rtr: 0.006098
+export_rtt: 14056.792969
+export_srt: 58395.515625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619284800
+export_bytes: 30091.476562
+export_flows: 9.903334
+export_packets: 61.236668
+export_rtr: 0.007389
+export_rtt: 13615.833008
+export_srt: 147772.343750
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619285100
+export_bytes: 30259.062500
+export_flows: 9.970000
+export_packets: 61.576668
+export_rtr: 0.046404
+export_rtt: 14821.988281
+export_srt: 139845.234375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619285400
+export_bytes: 30126.552734
+export_flows: 9.893333
+export_packets: 61.779999
+export_rtr: 0.022883
+export_rtt: 11168.000000
+export_srt: 65597.101562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619285700
+export_bytes: 32434.343750
+export_flows: 10.270000
+export_packets: 66.003334
+export_rtr: 0.006303
+export_rtt: 16789.748047
+export_srt: 53637.242188
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619286000
+export_bytes: 39265.273438
+export_flows: 10.053333
+export_packets: 72.349998
+export_rtr: 0.025806
+export_rtt: 13011.647461
+export_srt: 51211.617188
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619286300
+export_bytes: 31240.050781
+export_flows: 10.140000
+export_packets: 64.356667
+export_rtr: 0.028926
+export_rtt: 15420.455078
+export_srt: 54547.257812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619286600
+export_bytes: 30268.132812
+export_flows: 9.940000
+export_packets: 61.509998
+export_rtr: 0.028571
+export_rtt: 13964.835938
+export_srt: 65391.433594
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619286900
+export_bytes: 46895.683594
+export_flows: 10.260000
+export_packets: 79.646667
+export_rtr: 0.047312
+export_rtt: 23666.490234
+export_srt: 58674.753906
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619287200
+export_bytes: 29773.812500
+export_flows: 10.116667
+export_packets: 61.836666
+export_rtr: 0.009390
+export_rtt: 21917.982422
+export_srt: 85037.781250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619287500
+export_bytes: 3953394.250000
+export_flows: 13.510000
+export_packets: 2877.300049
+export_rtr: 0.031008
+export_rtt: 20665.638672
+export_srt: 101306.968750
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619287800
+export_bytes: 14865262.000000
+export_flows: 18.610001
+export_packets: 15664.169922
+export_rtr: 0.370321
+export_rtt: 123078.710938
+export_srt: 82087.289062
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619288100
+export_bytes: 2938436.750000
+export_flows: 11.723333
+export_packets: 3384.426758
+export_rtr: 0.679487
+export_rtt: 111165.648438
+export_srt: 96587.265625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619288400
+export_bytes: 30228.083984
+export_flows: 9.683333
+export_packets: 60.306667
+export_rtr: 0.006061
+export_rtt: 21598.464844
+export_srt: 110554.234375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619288700
+export_bytes: 30538.250000
+export_flows: 10.156667
+export_packets: 62.883335
+export_rtr: 0.023965
+export_rtt: 12136.420898
+export_srt: 61875.449219
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619289000
+export_bytes: 30278.367188
+export_flows: 10.046667
+export_packets: 62.116665
+export_rtr: 0.027149
+export_rtt: 18144.207031
+export_srt: 55383.859375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619289300
+export_bytes: 31390.136719
+export_flows: 9.973333
+export_packets: 62.913334
+export_rtr: 0.006726
+export_rtt: 14297.832031
+export_srt: 54520.566406
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619289600
+export_bytes: 30340.599609
+export_flows: 10.006667
+export_packets: 62.443333
+export_rtr: 0.074766
+export_rtt: 15565.976562
+export_srt: 60582.898438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619289900
+export_bytes: 30945.037109
+export_flows: 9.990000
+export_packets: 63.256668
+export_rtr: 0.028169
+export_rtt: 17760.355469
+export_srt: 65762.671875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619290200
+export_bytes: 31647.486328
+export_flows: 10.833333
+export_packets: 65.956665
+export_rtr: 0.024229
+export_rtt: 12205.286133
+export_srt: 62189.597656
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619290500
+export_bytes: 42173.355469
+export_flows: 10.316667
+export_packets: 77.453331
+export_rtr: 0.002299
+export_rtt: 18895.843750
+export_srt: 58184.121094
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619290800
+export_bytes: 32992.015625
+export_flows: 10.520000
+export_packets: 69.013336
+export_rtr: 0.008247
+export_rtt: 12809.412109
+export_srt: 57826.242188
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619291100
+export_bytes: 40509.925781
+export_flows: 10.203333
+export_packets: 72.516670
+export_rtr: 0.027273
+export_rtt: 11638.333008
+export_srt: 57376.671875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619291400
+export_bytes: 31187.345703
+export_flows: 10.190000
+export_packets: 66.383331
+export_rtr: 0.025522
+export_rtt: 12503.947266
+export_srt: 54165.300781
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619291700
+export_bytes: 32561.716797
+export_flows: 10.500000
+export_packets: 66.239998
+export_rtr: 0.033403
+export_rtt: 17494.296875
+export_srt: 49806.464844
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619292000
+export_bytes: 30366.953125
+export_flows: 9.973333
+export_packets: 61.693333
+export_rtr: 0.016484
+export_rtt: 17284.013672
+export_srt: 65621.867188
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619292300
+export_bytes: 31760.576172
+export_flows: 10.713333
+export_packets: 64.989998
+export_rtr: 0.019438
+export_rtt: 13028.765625
+export_srt: 62783.863281
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619292600
+export_bytes: 173242.781250
+export_flows: 10.736667
+export_packets: 207.110001
+export_rtr: 0.030364
+export_rtt: 17048.679688
+export_srt: 60222.066406
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619292900
+export_bytes: 32912.011719
+export_flows: 10.580000
+export_packets: 66.316666
+export_rtr: 0.006579
+export_rtt: 14732.257812
+export_srt: 51804.265625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619293200
+export_bytes: 30761.710938
+export_flows: 10.063334
+export_packets: 62.986668
+export_rtr: 0.007194
+export_rtt: 15068.770508
+export_srt: 55612.335938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619293500
+export_bytes: 30770.269531
+export_flows: 10.056666
+export_packets: 63.070000
+export_rtr: 0.088889
+export_rtt: 20092.082031
+export_srt: 68909.648438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619293800
+export_bytes: 31974.845703
+export_flows: 10.363334
+export_packets: 65.016670
+export_rtr: 0.023753
+export_rtt: 12633.524414
+export_srt: 63101.621094
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619294100
+export_bytes: 43097.335938
+export_flows: 10.403334
+export_packets: 77.026665
+export_rtr: 0.006536
+export_rtt: 18572.406250
+export_srt: 50412.683594
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619294400
+export_bytes: 31691.640625
+export_flows: 10.116667
+export_packets: 64.226669
+export_rtr: 0.015317
+export_rtt: 12745.199219
+export_srt: 65685.265625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619294700
+export_bytes: 41814.199219
+export_flows: 10.723333
+export_packets: 72.683334
+export_rtr: 0.025189
+export_rtt: 19459.525391
+export_srt: 97880.453125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619295000
+export_bytes: 32316.673828
+export_flows: 10.273334
+export_packets: 69.823334
+export_rtr: 0.024814
+export_rtt: 15958.498047
+export_srt: 62414.179688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619295300
+export_bytes: 30799.517578
+export_flows: 9.866667
+export_packets: 62.256668
+export_rtr: 0.005076
+export_rtt: 17013.412109
+export_srt: 83794.140625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619295600
+export_bytes: 30035.642578
+export_flows: 9.903334
+export_packets: 60.990002
+export_rtr: 0.009456
+export_rtt: 11384.928711
+export_srt: 54996.894531
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619295900
+export_bytes: 30138.892578
+export_flows: 9.983334
+export_packets: 61.476665
+export_rtr: 0.024887
+export_rtt: 12673.551758
+export_srt: 56647.136719
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619296200
+export_bytes: 30669.867188
+export_flows: 10.096666
+export_packets: 62.849998
+export_rtr: 0.022472
+export_rtt: 13988.263672
+export_srt: 56565.203125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619296500
+export_bytes: 31426.933594
+export_flows: 10.036667
+export_packets: 63.330002
+export_rtr: 0.004357
+export_rtt: 14774.465820
+export_srt: 76663.750000
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619296800
+export_bytes: 30075.583984
+export_flows: 9.733334
+export_packets: 60.696667
+export_rtr: 0.013021
+export_rtt: 20083.359375
+export_srt: 60581.660156
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619297100
+export_bytes: 48379.578125
+export_flows: 10.113334
+export_packets: 79.440002
+export_rtr: 0.026374
+export_rtt: 15287.382812
+export_srt: 52139.273438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619297400
+export_bytes: 30152.833984
+export_flows: 9.910000
+export_packets: 62.000000
+export_rtr: 0.030233
+export_rtt: 12533.133789
+export_srt: 57950.464844
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619297700
+export_bytes: 40243.863281
+export_flows: 10.096666
+export_packets: 70.143333
+export_rtr: 0.006726
+export_rtt: 15742.578125
+export_srt: 65257.070312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619298000
+export_bytes: 30606.966797
+export_flows: 10.056666
+export_packets: 64.120003
+export_rtr: 0.017857
+export_rtt: 14337.634766
+export_srt: 56412.511719
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619298300
+export_bytes: 39821.574219
+export_flows: 9.896667
+export_packets: 69.910004
+export_rtr: 0.031414
+export_rtt: 15876.818359
+export_srt: 75995.367188
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619298600
+export_bytes: 31364.546875
+export_flows: 10.196667
+export_packets: 67.646667
+export_rtr: 0.027897
+export_rtt: 12222.590820
+export_srt: 49893.082031
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619298900
+export_bytes: 32111.113281
+export_flows: 10.110000
+export_packets: 65.203331
+export_rtr: 0.018018
+export_rtt: 14123.610352
+export_srt: 58183.832031
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619299200
+export_bytes: 30315.986328
+export_flows: 10.086667
+export_packets: 62.483334
+export_rtr: 0.004484
+export_rtt: 10740.634766
+export_srt: 56221.347656
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619299500
+export_bytes: 30126.259766
+export_flows: 9.876667
+export_packets: 61.119999
+export_rtr: 0.031785
+export_rtt: 13422.054688
+export_srt: 68256.187500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619299800
+export_bytes: 30734.197266
+export_flows: 10.103333
+export_packets: 63.076668
+export_rtr: 0.050000
+export_rtt: 14625.204102
+export_srt: 66786.101562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619300100
+export_bytes: 32485.117188
+export_flows: 10.770000
+export_packets: 66.793335
+export_rtr: 0.019272
+export_rtt: 24852.828125
+export_srt: 68388.484375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619300400
+export_bytes: 30568.529297
+export_flows: 10.120000
+export_packets: 62.383335
+export_rtr: 0.005051
+export_rtt: 15675.959961
+export_srt: 65702.882812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619300700
+export_bytes: 31041.539062
+export_flows: 10.190000
+export_packets: 63.959999
+export_rtr: 0.045161
+export_rtt: 15832.744141
+export_srt: 53523.167969
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619301000
+export_bytes: 29936.589844
+export_flows: 9.823334
+export_packets: 60.736668
+export_rtr: 0.027848
+export_rtt: 12466.008789
+export_srt: 57139.441406
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619301300
+export_bytes: 40231.832031
+export_flows: 9.866667
+export_packets: 70.150002
+export_rtr: 0.030928
+export_rtt: 19240.544922
+export_srt: 81536.156250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619301600
+export_bytes: 29999.390625
+export_flows: 10.080000
+export_packets: 61.299999
+export_rtr: 0.006696
+export_rtt: 11081.022461
+export_srt: 71371.382812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619301900
+export_bytes: 41097.179688
+export_flows: 9.970000
+export_packets: 71.753334
+export_rtr: 0.051345
+export_rtt: 14780.482422
+export_srt: 88140.234375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619302200
+export_bytes: 31410.996094
+export_flows: 9.990000
+export_packets: 68.666664
+export_rtr: 0.024609
+export_rtt: 13330.414062
+export_srt: 53707.257812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619302500
+export_bytes: 30983.562500
+export_flows: 10.096666
+export_packets: 63.333332
+export_rtr: 0.024664
+export_rtt: 14694.566406
+export_srt: 53757.312500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619302800
+export_bytes: 30051.203125
+export_flows: 9.873333
+export_packets: 60.810001
+export_rtr: 0.007595
+export_rtt: 13862.024414
+export_srt: 73458.945312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619303100
+export_bytes: 29893.404297
+export_flows: 9.756667
+export_packets: 60.243332
+export_rtr: 0.025773
+export_rtt: 16414.869141
+export_srt: 85030.609375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619303400
+export_bytes: 30231.466797
+export_flows: 9.966666
+export_packets: 62.446667
+export_rtr: 0.025404
+export_rtt: 11393.863281
+export_srt: 64425.359375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619303700
+export_bytes: 31664.833984
+export_flows: 10.103333
+export_packets: 64.503334
+export_rtr: 0.006438
+export_rtt: 11981.740234
+export_srt: 49305.832031
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619304000
+export_bytes: 30440.123047
+export_flows: 10.033334
+export_packets: 62.436668
+export_rtr: 0.006508
+export_rtt: 12041.414062
+export_srt: 51932.480469
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619304300
+export_bytes: 30772.425781
+export_flows: 10.026667
+export_packets: 63.070000
+export_rtr: 0.022727
+export_rtt: 18464.736328
+export_srt: 54450.074219
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619304600
+export_bytes: 30063.404297
+export_flows: 9.893333
+export_packets: 61.906666
+export_rtr: 0.029412
+export_rtt: 9300.250000
+export_srt: 53072.886719
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619304900
+export_bytes: 40207.750000
+export_flows: 9.783334
+export_packets: 70.080002
+export_rtr: 0.012920
+export_rtt: 19442.515625
+export_srt: 67767.023438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619305200
+export_bytes: 30461.212891
+export_flows: 10.183333
+export_packets: 62.400002
+export_rtr: 0.006466
+export_rtt: 17899.826172
+export_srt: 53590.261719
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619305500
+export_bytes: 39994.562500
+export_flows: 10.010000
+export_packets: 69.626663
+export_rtr: 0.048000
+export_rtt: 21064.224609
+export_srt: 81549.796875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619305800
+export_bytes: 1689743.000000
+export_flows: 10.336667
+export_packets: 1637.303345
+export_rtr: 0.033333
+export_rtt: 12261.857422
+export_srt: 60563.933594
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619306100
+export_bytes: 339221.156250
+export_flows: 10.033334
+export_packets: 456.546661
+export_rtr: 0.007958
+export_rtt: 29384.425781
+export_srt: 77162.531250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619306400
+export_bytes: 4192792.500000
+export_flows: 11.350000
+export_packets: 4727.876465
+export_rtr: 0.023932
+export_rtt: 18446.650391
+export_srt: 70882.859375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619306700
+export_bytes: 180466.953125
+export_flows: 9.853333
+export_packets: 257.096680
+export_rtr: 0.037333
+export_rtt: 18339.666016
+export_srt: 117153.906250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619307000
+export_bytes: 30092.244141
+export_flows: 9.930000
+export_packets: 61.846668
+export_rtr: 0.037383
+export_rtt: 11979.477539
+export_srt: 62113.316406
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619307300
+export_bytes: 31739.792969
+export_flows: 10.150000
+export_packets: 63.676666
+export_rtr: 0.014151
+export_rtt: 21412.494141
+export_srt: 60210.925781
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619307600
+export_bytes: 30500.027344
+export_flows: 10.213333
+export_packets: 62.783333
+export_rtr: 0.028139
+export_rtt: 22163.664062
+export_srt: 52308.785156
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619307900
+export_bytes: 30615.666016
+export_flows: 10.000000
+export_packets: 62.453335
+export_rtr: 0.017660
+export_rtt: 14884.616211
+export_srt: 52457.042969
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619308200
+export_bytes: 30313.236328
+export_flows: 9.990000
+export_packets: 61.576668
+export_rtr: 0.034063
+export_rtt: 17403.191406
+export_srt: 81076.179688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619308500
+export_bytes: 40222.281250
+export_flows: 9.806666
+export_packets: 70.736664
+export_rtr: 0.005000
+export_rtt: 17953.232422
+export_srt: 62880.167969
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619308800
+export_bytes: 30201.066406
+export_flows: 9.986667
+export_packets: 61.593334
+export_rtr: 0.009569
+export_rtt: 13880.082031
+export_srt: 64665.355469
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619309100
+export_bytes: 39903.859375
+export_flows: 9.870000
+export_packets: 70.533333
+export_rtr: 0.017241
+export_rtt: 12926.773438
+export_srt: 67508.875000
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619309400
+export_bytes: 30849.876953
+export_flows: 9.896667
+export_packets: 64.543335
+export_rtr: 0.036855
+export_rtt: 17076.601562
+export_srt: 66111.335938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619309700
+export_bytes: 30678.017578
+export_flows: 9.930000
+export_packets: 62.783333
+export_rtr: 0.006912
+export_rtt: 13169.460938
+export_srt: 56826.332031
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619310000
+export_bytes: 30513.085938
+export_flows: 10.043333
+export_packets: 62.393333
+export_rtr: 0.029545
+export_rtt: 11032.256836
+export_srt: 63409.917969
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619310300
+export_bytes: 29819.117188
+export_flows: 9.780000
+export_packets: 60.020000
+export_rtr: 0.014851
+export_rtt: 12755.812500
+export_srt: 53860.496094
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619310600
+export_bytes: 29934.949219
+export_flows: 9.763333
+export_packets: 59.553333
+export_rtr: 0.040816
+export_rtt: 23380.785156
+export_srt: 74060.210938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619310900
+export_bytes: 31492.527344
+export_flows: 10.140000
+export_packets: 64.486664
+export_rtr: 0.008715
+export_rtt: 12635.650391
+export_srt: 49417.035156
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619311200
+export_bytes: 30485.740234
+export_flows: 10.020000
+export_packets: 61.696667
+export_rtr: 0.014184
+export_rtt: 17965.279297
+export_srt: 65649.812500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619311500
+export_bytes: 30849.160156
+export_flows: 9.940000
+export_packets: 63.299999
+export_rtr: 0.015487
+export_rtt: 19183.083984
+export_srt: 64194.546875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619311800
+export_bytes: 30056.693359
+export_flows: 9.836667
+export_packets: 60.883335
+export_rtr: 0.035264
+export_rtt: 13949.528320
+export_srt: 59720.406250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619312100
+export_bytes: 40421.500000
+export_flows: 10.003333
+export_packets: 71.836670
+export_rtr: 0.011765
+export_rtt: 26564.460938
+export_srt: 57035.023438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619312400
+export_bytes: 30411.453125
+export_flows: 9.990000
+export_packets: 63.126667
+export_rtr: 0.002304
+export_rtt: 16801.933594
+export_srt: 59951.890625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619312700
+export_bytes: 46261.437500
+export_flows: 9.886666
+export_packets: 74.930000
+export_rtr: 0.019277
+export_rtt: 14796.006836
+export_srt: 63925.976562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619313000
+export_bytes: 12269546.000000
+export_flows: 11.310000
+export_packets: 11822.696289
+export_rtr: 0.079279
+export_rtt: 35030.332031
+export_srt: 90395.812500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619313300
+export_bytes: 1231532.500000
+export_flows: 10.470000
+export_packets: 1308.793335
+export_rtr: 0.013393
+export_rtt: 32530.548828
+export_srt: 89635.875000
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619313600
+export_bytes: 30255.849609
+export_flows: 9.923333
+export_packets: 61.916668
+export_rtr: 0.034965
+export_rtt: 11788.160156
+export_srt: 55447.847656
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619313900
+export_bytes: 30143.552734
+export_flows: 10.050000
+export_packets: 61.113335
+export_rtr: 0.020455
+export_rtt: 12056.103516
+export_srt: 56722.429688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619314200
+export_bytes: 29807.552734
+export_flows: 9.800000
+export_packets: 60.466667
+export_rtr: 0.049869
+export_rtt: 15653.095703
+export_srt: 72750.695312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619314500
+export_bytes: 171843.843750
+export_flows: 10.220000
+export_packets: 202.083328
+export_rtr: 0.013216
+export_rtt: 19688.734375
+export_srt: 78077.070312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619314800
+export_bytes: 30522.210938
+export_flows: 10.183333
+export_packets: 63.023335
+export_rtr: 0.004098
+export_rtt: 10087.550781
+export_srt: 52501.457031
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619315100
+export_bytes: 31463.429688
+export_flows: 10.116667
+export_packets: 63.973331
+export_rtr: 0.004515
+export_rtt: 36941.644531
+export_srt: 56824.550781
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619315400
+export_bytes: 30075.269531
+export_flows: 9.750000
+export_packets: 61.013332
+export_rtr: 0.073418
+export_rtt: 42292.238281
+export_srt: 61373.386719
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619315700
+export_bytes: 40421.429688
+export_flows: 10.030000
+export_packets: 71.806664
+export_rtr: 0.007009
+export_rtt: 38609.367188
+export_srt: 75675.203125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619316000
+export_bytes: 30630.787109
+export_flows: 10.323334
+export_packets: 64.243332
+export_rtr: 0.003937
+export_rtt: 32850.082031
+export_srt: 52946.882812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619316300
+export_bytes: 40201.070312
+export_flows: 9.886666
+export_packets: 70.123337
+export_rtr: 0.008108
+export_rtt: 27761.476562
+export_srt: 343560.281250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619316600
+export_bytes: 30850.263672
+export_flows: 9.976666
+export_packets: 65.129997
+export_rtr: 0.023419
+export_rtt: 15355.915039
+export_srt: 59777.703125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619316900
+export_bytes: 31305.335938
+export_flows: 9.866667
+export_packets: 62.726665
+export_rtr: 0.005038
+export_rtt: 18239.638672
+export_srt: 68491.078125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619317200
+export_bytes: 30557.443359
+export_flows: 9.980000
+export_packets: 61.533333
+export_rtr: 0.007792
+export_rtt: 34621.750000
+export_srt: 112284.476562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619317500
+export_bytes: 30519.886719
+export_flows: 10.136666
+export_packets: 62.373333
+export_rtr: 0.023810
+export_rtt: 31398.425781
+export_srt: 107627.101562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619317800
+export_bytes: 29959.687500
+export_flows: 9.816667
+export_packets: 60.696667
+export_rtr: 0.010025
+export_rtt: 15121.238281
+export_srt: 66489.515625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619318100
+export_bytes: 31347.570312
+export_flows: 10.010000
+export_packets: 62.869999
+export_rtr: 0.004796
+export_rtt: 17908.214844
+export_srt: 89596.640625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619318400
+export_bytes: 30218.689453
+export_flows: 10.016666
+export_packets: 61.626667
+export_rtr: 0.006944
+export_rtt: 15067.926758
+export_srt: 64396.152344
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619318700
+export_bytes: 30729.712891
+export_flows: 9.976666
+export_packets: 63.143333
+export_rtr: 0.011038
+export_rtt: 13038.732422
+export_srt: 55005.394531
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619319000
+export_bytes: 30176.300781
+export_flows: 10.013333
+export_packets: 61.790001
+export_rtr: 0.007042
+export_rtt: 12046.708008
+export_srt: 57691.140625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619319300
+export_bytes: 40503.535156
+export_flows: 10.043333
+export_packets: 72.043335
+export_rtr: 0.030905
+export_rtt: 18315.115234
+export_srt: 66514.523438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619319600
+export_bytes: 30716.359375
+export_flows: 9.993333
+export_packets: 63.113335
+export_rtr: 0.009238
+export_rtt: 20053.687500
+export_srt: 65731.218750
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619319900
+export_bytes: 39808.828125
+export_flows: 9.870000
+export_packets: 70.223335
+export_rtr: 0.004914
+export_rtt: 13808.394531
+export_srt: 98110.984375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619320200
+export_bytes: 31770.173828
+export_flows: 10.076667
+export_packets: 66.769997
+export_rtr: 0.011287
+export_rtt: 13316.849609
+export_srt: 60326.296875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619320500
+export_bytes: 30478.896484
+export_flows: 9.836667
+export_packets: 61.813332
+export_rtr: 0.009828
+export_rtt: 18932.626953
+export_srt: 67147.976562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619320800
+export_bytes: 30059.302734
+export_flows: 9.973333
+export_packets: 61.466667
+export_rtr: 0.002326
+export_rtt: 11086.326172
+export_srt: 93268.492188
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619321100
+export_bytes: 30106.292969
+export_flows: 10.060000
+export_packets: 61.080002
+export_rtr: 0.038549
+export_rtt: 12145.951172
+export_srt: 82527.953125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619321400
+export_bytes: 30104.283203
+export_flows: 9.833333
+export_packets: 61.720001
+export_rtr: 0.004728
+export_rtt: 15936.327148
+export_srt: 65745.796875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619321700
+export_bytes: 31173.320312
+export_flows: 9.853333
+export_packets: 62.419998
+export_rtr: 0.007481
+export_rtt: 17531.630859
+export_srt: 69392.257812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619322000
+export_bytes: 30505.345703
+export_flows: 10.073334
+export_packets: 61.753334
+export_rtr: 0.018824
+export_rtt: 19294.593750
+export_srt: 63016.214844
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619322300
+export_bytes: 30890.767578
+export_flows: 10.060000
+export_packets: 63.273335
+export_rtr: 0.009153
+export_rtt: 18741.601562
+export_srt: 67725.554688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619322600
+export_bytes: 30120.164062
+export_flows: 10.030000
+export_packets: 61.660000
+export_rtr: 0.006682
+export_rtt: 9673.149414
+export_srt: 70313.796875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619322900
+export_bytes: 40261.488281
+export_flows: 9.873333
+export_packets: 71.103333
+export_rtr: 0.031553
+export_rtt: 14370.253906
+export_srt: 64409.824219
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619323200
+export_bytes: 30167.619141
+export_flows: 10.056666
+export_packets: 61.343334
+export_rtr: 0.009029
+export_rtt: 14912.353516
+export_srt: 54233.015625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619323500
+export_bytes: 40297.128906
+export_flows: 10.163333
+export_packets: 72.296669
+export_rtr: 0.004310
+export_rtt: 11642.291992
+export_srt: 57897.214844
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619323800
+export_bytes: 31462.722656
+export_flows: 10.326667
+export_packets: 67.503334
+export_rtr: 0.040161
+export_rtt: 11181.034180
+export_srt: 56939.632812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619324100
+export_bytes: 30852.574219
+export_flows: 10.003333
+export_packets: 63.576668
+export_rtr: 0.008969
+export_rtt: 16825.640625
+export_srt: 61325.246094
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619324400
+export_bytes: 30062.933594
+export_flows: 10.033334
+export_packets: 61.566666
+export_rtr: 0.013304
+export_rtt: 12997.697266
+export_srt: 59672.632812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619324700
+export_bytes: 30857.580078
+export_flows: 10.093333
+export_packets: 62.766666
+export_rtr: 0.020737
+export_rtt: 12531.271484
+export_srt: 57015.156250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619325000
+export_bytes: 39060.710938
+export_flows: 9.693334
+export_packets: 69.033333
+export_rtr: 0.008850
+export_rtt: 22129.650391
+export_srt: 86331.578125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619325300
+export_bytes: 31414.654297
+export_flows: 10.033334
+export_packets: 63.673332
+export_rtr: 0.004474
+export_rtt: 13456.548828
+export_srt: 99460.859375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619325600
+export_bytes: 58810.105469
+export_flows: 10.213333
+export_packets: 84.243332
+export_rtr: 0.029724
+export_rtt: 14091.628906
+export_srt: 51046.261719
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619325900
+export_bytes: 30821.539062
+export_flows: 10.036667
+export_packets: 63.349998
+export_rtr: 0.006912
+export_rtt: 19749.800781
+export_srt: 55620.054688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619326200
+export_bytes: 30327.156250
+export_flows: 10.063334
+export_packets: 61.759998
+export_rtr: 0.006711
+export_rtt: 14720.107422
+export_srt: 55781.257812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619326500
+export_bytes: 40647.078125
+export_flows: 9.953333
+export_packets: 72.243332
+export_rtr: 0.009091
+export_rtt: 16000.737305
+export_srt: 72954.398438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619326800
+export_bytes: 30363.890625
+export_flows: 10.103333
+export_packets: 62.403332
+export_rtr: 0.004367
+export_rtt: 14528.116211
+export_srt: 53872.828125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619327100
+export_bytes: 40298.332031
+export_flows: 10.040000
+export_packets: 73.300003
+export_rtr: 0.006865
+export_rtt: 10456.064453
+export_srt: 56887.398438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619327400
+export_bytes: 30679.312500
+export_flows: 9.893333
+export_packets: 63.063332
+export_rtr: 0.030000
+export_rtt: 16107.957031
+export_srt: 60907.542969
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619327700
+export_bytes: 30417.123047
+export_flows: 9.833333
+export_packets: 62.216667
+export_rtr: 0.005013
+export_rtt: 16705.960938
+export_srt: 70592.812500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619328000
+export_bytes: 30224.117188
+export_flows: 10.016666
+export_packets: 61.886665
+export_rtr: 0.009412
+export_rtt: 13099.104492
+export_srt: 61352.609375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619328300
+export_bytes: 30221.306641
+export_flows: 9.903334
+export_packets: 60.403332
+export_rtr: 0.013158
+export_rtt: 18747.113281
+export_srt: 74403.804688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619328600
+export_bytes: 30101.306641
+export_flows: 9.826667
+export_packets: 60.843334
+export_rtr: 0.015075
+export_rtt: 14097.085938
+export_srt: 63633.367188
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619328900
+export_bytes: 31390.400391
+export_flows: 10.103333
+export_packets: 63.820000
+export_rtr: 0.015453
+export_rtt: 14040.746094
+export_srt: 55883.351562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619329200
+export_bytes: 30473.033203
+export_flows: 10.140000
+export_packets: 62.453335
+export_rtr: 0.008772
+export_rtt: 12506.821289
+export_srt: 54351.929688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619329500
+export_bytes: 30834.943359
+export_flows: 10.153334
+export_packets: 63.603333
+export_rtr: 0.006579
+export_rtt: 14022.933594
+export_srt: 62895.140625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619329800
+export_bytes: 30225.947266
+export_flows: 10.020000
+export_packets: 61.163334
+export_rtr: 0.007042
+export_rtt: 12955.193359
+export_srt: 59104.812500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619330100
+export_bytes: 40347.632812
+export_flows: 10.070000
+export_packets: 71.970001
+export_rtr: 0.004556
+export_rtt: 12490.299805
+export_srt: 64620.808594
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619330400
+export_bytes: 38672.984375
+export_flows: 10.203333
+export_packets: 74.489998
+export_rtr: 0.037694
+export_rtt: 23973.031250
+export_srt: 71536.414062
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619330700
+export_bytes: 48018.019531
+export_flows: 10.006667
+export_packets: 80.606667
+export_rtr: 0.013043
+export_rtt: 11241.761719
+export_srt: 67173.210938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619331000
+export_bytes: 30658.919922
+export_flows: 10.130000
+export_packets: 62.586666
+export_rtr: 0.002326
+export_rtt: 15161.875977
+export_srt: 66796.335938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619331300
+export_bytes: 30980.509766
+export_flows: 10.043333
+export_packets: 63.206665
+export_rtr: 0.027088
+export_rtt: 14592.905273
+export_srt: 60628.878906
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619331600
+export_bytes: 30421.443359
+export_flows: 10.080000
+export_packets: 62.520000
+export_rtr: 0.009153
+export_rtt: 13480.931641
+export_srt: 60678.027344
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619331900
+export_bytes: 29847.369141
+export_flows: 9.833333
+export_packets: 60.106667
+export_rtr: 0.005089
+export_rtt: 13137.638672
+export_srt: 62884.406250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619332200
+export_bytes: 30344.656250
+export_flows: 9.906667
+export_packets: 61.660000
+export_rtr: 0.035377
+export_rtt: 13747.825195
+export_srt: 57568.941406
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619332500
+export_bytes: 31497.826172
+export_flows: 10.056666
+export_packets: 63.413334
+export_rtr: 0.009302
+export_rtt: 16490.335938
+export_srt: 64625.132812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619332800
+export_bytes: 30029.320312
+export_flows: 9.886666
+export_packets: 60.290001
+export_rtr: 0.005115
+export_rtt: 17074.599609
+export_srt: 64046.238281
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619333100
+export_bytes: 30724.746094
+export_flows: 9.970000
+export_packets: 62.509998
+export_rtr: 0.033413
+export_rtt: 17405.826172
+export_srt: 60666.925781
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619333400
+export_bytes: 29867.140625
+export_flows: 9.796667
+export_packets: 60.459999
+export_rtr: 0.007653
+export_rtt: 13938.744141
+export_srt: 60554.554688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619333700
+export_bytes: 40769.738281
+export_flows: 10.196667
+export_packets: 72.879997
+export_rtr: 0.010941
+export_rtt: 20043.111328
+export_srt: 59238.078125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619334000
+export_bytes: 30307.896484
+export_flows: 10.083333
+export_packets: 62.560001
+export_rtr: 0.017354
+export_rtt: 12499.368164
+export_srt: 61553.460938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619334300
+export_bytes: 40659.218750
+export_flows: 10.013333
+export_packets: 74.866669
+export_rtr: 0.009091
+export_rtt: 11889.813477
+export_srt: 60663.601562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619334600
+export_bytes: 30108.353516
+export_flows: 9.753333
+export_packets: 60.520000
+export_rtr: 0.002558
+export_rtt: 17867.041016
+export_srt: 60023.546875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619334900
+export_bytes: 31110.289062
+export_flows: 10.163333
+export_packets: 63.916668
+export_rtr: 0.008889
+export_rtt: 17252.255859
+export_srt: 57862.406250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619335200
+export_bytes: 30182.716797
+export_flows: 9.990000
+export_packets: 61.549999
+export_rtr: 0.011655
+export_rtt: 13031.353516
+export_srt: 60372.460938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619335500
+export_bytes: 30079.339844
+export_flows: 9.880000
+export_packets: 61.490002
+export_rtr: 0.007335
+export_rtt: 13318.693359
+export_srt: 61570.511719
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619335800
+export_bytes: 30119.099609
+export_flows: 9.823334
+export_packets: 60.406666
+export_rtr: 0.005076
+export_rtt: 14732.035156
+export_srt: 64627.230469
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619336100
+export_bytes: 511058.625000
+export_flows: 10.713333
+export_packets: 692.613342
+export_rtr: 4.094077
+export_rtt: 26493.523438
+export_srt: 54064.761719
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619336400
+export_bytes: 170608.046875
+export_flows: 10.090000
+export_packets: 201.563339
+export_rtr: 0.002242
+export_rtt: 26897.808594
+export_srt: 55280.875000
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619336700
+export_bytes: 31367.556641
+export_flows: 10.136666
+export_packets: 64.333336
+export_rtr: 0.008696
+export_rtt: 13558.515625
+export_srt: 56009.367188
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619337000
+export_bytes: 29941.300781
+export_flows: 9.950000
+export_packets: 60.633335
+export_rtr: 0.010025
+export_rtt: 14209.249023
+export_srt: 62767.929688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619337300
+export_bytes: 40400.714844
+export_flows: 9.936666
+export_packets: 71.370003
+export_rtr: 0.009950
+export_rtt: 15862.966797
+export_srt: 63430.515625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619337600
+export_bytes: 30118.607422
+export_flows: 9.890000
+export_packets: 61.360001
+export_rtr: 0.007075
+export_rtt: 14852.602539
+export_srt: 59144.058594
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619337900
+export_bytes: 40608.914062
+export_flows: 10.040000
+export_packets: 74.953331
+export_rtr: 0.011261
+export_rtt: 13100.397461
+export_srt: 59786.285156
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619338200
+export_bytes: 30335.906250
+export_flows: 9.986667
+export_packets: 61.713333
+export_rtr: 0.011338
+export_rtt: 12542.442383
+export_srt: 60940.578125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619338500
+export_bytes: 39495.535156
+export_flows: 9.823334
+export_packets: 71.473335
+export_rtr: 0.031332
+export_rtt: 14929.337891
+export_srt: 66426.171875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619338800
+export_bytes: 30375.443359
+export_flows: 10.170000
+export_packets: 62.286667
+export_rtr: 0.004474
+export_rtt: 14253.301758
+export_srt: 66583.742188
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619339100
+export_bytes: 30308.523438
+export_flows: 10.103333
+export_packets: 62.393333
+export_rtr: 0.006637
+export_rtt: 11348.186523
+export_srt: 57990.855469
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619339400
+export_bytes: 31296.480469
+export_flows: 10.006667
+export_packets: 62.970001
+export_rtr: 0.051220
+export_rtt: 17916.626953
+export_srt: 72737.015625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619339700
+export_bytes: 32480.009766
+export_flows: 10.163333
+export_packets: 65.233330
+export_rtr: 0.008529
+export_rtt: 14343.787109
+export_srt: 58311.191406
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619340000
+export_bytes: 30210.335938
+export_flows: 10.086667
+export_packets: 62.023335
+export_rtr: 0.006834
+export_rtt: 13628.486328
+export_srt: 56843.621094
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619340300
+export_bytes: 30824.623047
+export_flows: 9.930000
+export_packets: 62.766666
+export_rtr: 0.075829
+export_rtt: 18767.820312
+export_srt: 60889.074219
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619340600
+export_bytes: 30131.744141
+export_flows: 10.110000
+export_packets: 61.706665
+export_rtr: 0.011161
+export_rtt: 11618.373047
+export_srt: 57162.468750
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619340900
+export_bytes: 40858.253906
+export_flows: 10.213333
+export_packets: 73.236664
+export_rtr: 0.004246
+export_rtt: 16199.788086
+export_srt: 60081.609375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619341200
+export_bytes: 31238.255859
+export_flows: 10.296667
+export_packets: 63.786667
+export_rtr: 0.004405
+export_rtt: 20733.115234
+export_srt: 57986.281250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619341500
+export_bytes: 40400.675781
+export_flows: 9.780000
+export_packets: 73.783333
+export_rtr: 0.007389
+export_rtt: 13555.744141
+export_srt: 67618.117188
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619341800
+export_bytes: 30429.800781
+export_flows: 9.970000
+export_packets: 62.090000
+export_rtr: 0.011364
+export_rtt: 12180.620117
+export_srt: 59491.382812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619342100
+export_bytes: 31004.925781
+export_flows: 10.213333
+export_packets: 63.320000
+export_rtr: 0.004425
+export_rtt: 17824.326172
+export_srt: 70975.804688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619342400
+export_bytes: 30148.697266
+export_flows: 9.966666
+export_packets: 61.186668
+export_rtr: 0.022883
+export_rtt: 12679.451172
+export_srt: 58492.292969
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619342700
+export_bytes: 30045.720703
+export_flows: 9.903334
+export_packets: 61.073334
+export_rtr: 0.004963
+export_rtt: 14225.920898
+export_srt: 73182.960938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619343000
+export_bytes: 112766.875000
+export_flows: 9.930000
+export_packets: 127.089996
+export_rtr: 0.010050
+export_rtt: 20805.271484
+export_srt: 62342.011719
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619343300
+export_bytes: 31577.476562
+export_flows: 10.110000
+export_packets: 64.183334
+export_rtr: 0.024123
+export_rtt: 15223.332031
+export_srt: 59143.761719
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619343600
+export_bytes: 30275.744141
+export_flows: 10.133333
+export_packets: 62.253334
+export_rtr: 0.012632
+export_rtt: 10449.417969
+export_srt: 69462.421875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619343900
+export_bytes: 30761.267578
+export_flows: 10.023334
+export_packets: 63.316666
+export_rtr: 0.002304
+export_rtt: 14835.410156
+export_srt: 67961.781250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619344200
+export_bytes: 30198.396484
+export_flows: 10.053333
+export_packets: 62.310001
+export_rtr: 0.010917
+export_rtt: 10592.247070
+export_srt: 69650.875000
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619344500
+export_bytes: 40684.695312
+export_flows: 10.063334
+export_packets: 72.743332
+export_rtr: 0.031180
+export_rtt: 14042.026367
+export_srt: 84446.859375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619344800
+export_bytes: 374904.656250
+export_flows: 11.453333
+export_packets: 348.393341
+export_rtr: 0.695535
+export_rtt: 47659.480469
+export_srt: 111097.992188
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619345100
+export_bytes: 41192.750000
+export_flows: 10.153334
+export_packets: 76.513336
+export_rtr: 0.010395
+export_rtt: 13155.906250
+export_srt: 67064.593750
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619345400
+export_bytes: 30559.113281
+export_flows: 10.166667
+export_packets: 63.400002
+export_rtr: 0.008547
+export_rtt: 11678.772461
+export_srt: 62728.566406
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619345700
+export_bytes: 39883.324219
+export_flows: 9.950000
+export_packets: 73.320000
+export_rtr: 0.016166
+export_rtt: 18591.039062
+export_srt: 74450.437500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619346000
+export_bytes: 30999.744141
+export_flows: 10.533334
+export_packets: 64.703331
+export_rtr: 0.020952
+export_rtt: 11885.127930
+export_srt: 72438.273438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619346300
+export_bytes: 30160.259766
+export_flows: 9.943334
+export_packets: 61.436668
+export_rtr: 0.013857
+export_rtt: 13028.616211
+export_srt: 66234.656250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619346600
+export_bytes: 30151.300781
+export_flows: 9.903334
+export_packets: 61.623333
+export_rtr: 0.011494
+export_rtt: 13126.800781
+export_srt: 63173.855469
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619346900
+export_bytes: 31851.283203
+export_flows: 9.933333
+export_packets: 63.919998
+export_rtr: 0.004751
+export_rtt: 17651.234375
+export_srt: 73190.125000
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619347200
+export_bytes: 29902.457031
+export_flows: 9.900000
+export_packets: 60.770000
+export_rtr: 0.014320
+export_rtt: 12752.749023
+export_srt: 59062.585938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619347500
+export_bytes: 30756.746094
+export_flows: 9.860000
+export_packets: 62.356667
+export_rtr: 0.009615
+export_rtt: 18468.326172
+export_srt: 78654.085938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619347800
+export_bytes: 30001.414062
+export_flows: 9.916667
+export_packets: 61.020000
+export_rtr: 0.011765
+export_rtt: 11577.308594
+export_srt: 65025.828125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619348100
+export_bytes: 40791.851562
+export_flows: 10.180000
+export_packets: 73.466667
+export_rtr: 0.006173
+export_rtt: 18603.794922
+export_srt: 57687.820312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619348400
+export_bytes: 30065.476562
+export_flows: 9.940000
+export_packets: 61.113335
+export_rtr: 0.002331
+export_rtt: 14264.522461
+export_srt: 66743.101562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619348700
+export_bytes: 40424.597656
+export_flows: 9.783334
+export_packets: 73.473335
+export_rtr: 0.007874
+export_rtt: 16380.206055
+export_srt: 82101.414062
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619349000
+export_bytes: 30473.816406
+export_flows: 9.930000
+export_packets: 61.926666
+export_rtr: 0.007042
+export_rtt: 14228.867188
+export_srt: 66637.539062
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619349300
+export_bytes: 39653.011719
+export_flows: 9.933333
+export_packets: 72.846664
+export_rtr: 0.009592
+export_rtt: 15660.877930
+export_srt: 63502.558594
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619349600
+export_bytes: 29966.720703
+export_flows: 9.916667
+export_packets: 61.076668
+export_rtr: 0.042254
+export_rtt: 12282.988281
+export_srt: 61349.976562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619349900
+export_bytes: 29943.886719
+export_flows: 9.713333
+export_packets: 60.509998
+export_rtr: 0.002688
+export_rtt: 15472.930664
+export_srt: 89036.656250
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619350200
+export_bytes: 29916.457031
+export_flows: 9.940000
+export_packets: 60.750000
+export_rtr: 0.007353
+export_rtt: 15302.836914
+export_srt: 71670.351562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619350500
+export_bytes: 32863.765625
+export_flows: 10.310000
+export_packets: 66.876663
+export_rtr: 0.006036
+export_rtt: 14297.218750
+export_srt: 59641.894531
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619350800
+export_bytes: 30145.802734
+export_flows: 10.000000
+export_packets: 61.553333
+export_rtr: 0.006356
+export_rtt: 10650.743164
+export_srt: 56084.636719
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619351100
+export_bytes: 30817.890625
+export_flows: 10.060000
+export_packets: 63.349998
+export_rtr: 0.006593
+export_rtt: 12202.252930
+export_srt: 59919.351562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619351400
+export_bytes: 30343.869141
+export_flows: 9.876667
+export_packets: 61.389999
+export_rtr: 0.022167
+export_rtt: 13781.782227
+export_srt: 78187.007812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619351700
+export_bytes: 40675.035156
+export_flows: 10.060000
+export_packets: 72.733330
+export_rtr: 0.024609
+export_rtt: 13534.174805
+export_srt: 68684.164062
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619352000
+export_bytes: 29963.419922
+export_flows: 9.896667
+export_packets: 60.720001
+export_rtr: 0.004866
+export_rtt: 14507.390625
+export_srt: 70931.414062
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619352300
+export_bytes: 40499.652344
+export_flows: 9.953333
+export_packets: 74.836670
+export_rtr: 0.011468
+export_rtt: 10146.595703
+export_srt: 70343.625000
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619352600
+export_bytes: 39298.476562
+export_flows: 10.056666
+export_packets: 70.800003
+export_rtr: 0.007463
+export_rtt: 16225.797852
+export_srt: 69725.968750
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619352900
+export_bytes: 30764.753906
+export_flows: 9.960000
+export_packets: 63.416668
+export_rtr: 0.006667
+export_rtt: 13774.801758
+export_srt: 66730.828125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619353200
+export_bytes: 30534.503906
+export_flows: 10.033334
+export_packets: 62.463333
+export_rtr: 0.023256
+export_rtt: 13168.351562
+export_srt: 64448.726562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619353500
+export_bytes: 30192.113281
+export_flows: 9.923333
+export_packets: 62.090000
+export_rtr: 0.009112
+export_rtt: 11254.895508
+export_srt: 77393.328125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619353800
+export_bytes: 30150.646484
+export_flows: 10.000000
+export_packets: 61.093334
+export_rtr: 0.011876
+export_rtt: 13452.890625
+export_srt: 73113.820312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619354100
+export_bytes: 31901.566406
+export_flows: 10.203333
+export_packets: 64.676666
+export_rtr: 0.004193
+export_rtt: 16272.593750
+export_srt: 62877.078125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619354400
+export_bytes: 30219.419922
+export_flows: 9.973333
+export_packets: 61.806667
+export_rtr: 0.006494
+export_rtt: 9703.294922
+export_srt: 55254.683594
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619354700
+export_bytes: 30734.367188
+export_flows: 9.930000
+export_packets: 63.016666
+export_rtr: 0.004785
+export_rtt: 19115.753906
+export_srt: 67961.421875
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619355000
+export_bytes: 33581.582031
+export_flows: 10.390000
+export_packets: 66.430000
+export_rtr: 0.019685
+export_rtt: 19364.441406
+export_srt: 57266.070312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619355300
+export_bytes: 40460.308594
+export_flows: 9.936666
+export_packets: 71.976669
+export_rtr: 0.004425
+export_rtt: 14695.603516
+export_srt: 67298.687500
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619355600
+export_bytes: 30243.095703
+export_flows: 9.923333
+export_packets: 61.653332
+export_rtr: 0.004773
+export_rtt: 16909.240234
+export_srt: 68210.875000
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619355900
+export_bytes: 40691.074219
+export_flows: 10.070000
+export_packets: 74.633331
+export_rtr: 0.011136
+export_rtt: 10991.069336
+export_srt: 71773.484375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619356200
+export_bytes: 30687.109375
+export_flows: 9.910000
+export_packets: 62.400002
+export_rtr: 0.012019
+export_rtt: 16749.761719
+export_srt: 75593.851562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619356500
+export_bytes: 30898.009766
+export_flows: 10.033334
+export_packets: 63.259998
+export_rtr: 0.006818
+export_rtt: 21360.613281
+export_srt: 77531.468750
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619356800
+export_bytes: 30093.990234
+export_flows: 9.966666
+export_packets: 60.776669
+export_rtr: 0.007177
+export_rtt: 15795.542969
+export_srt: 66929.476562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619357100
+export_bytes: 29859.533203
+export_flows: 9.806666
+export_packets: 59.523335
+export_rtr: 0.031830
+export_rtt: 19033.148438
+export_srt: 78156.554688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619357400
+export_bytes: 39053.125000
+export_flows: 10.016666
+export_packets: 71.153336
+export_rtr: 0.002268
+export_rtt: 12926.045898
+export_srt: 60038.570312
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619357700
+export_bytes: 31317.789062
+export_flows: 9.923333
+export_packets: 62.823334
+export_rtr: 0.004831
+export_rtt: 16226.092773
+export_srt: 81876.710938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619358000
+export_bytes: 30370.689453
+export_flows: 9.913333
+export_packets: 60.830002
+export_rtr: 0.066667
+export_rtt: 15443.913086
+export_srt: 74655.632812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619358300
+export_bytes: 171455.046875
+export_flows: 10.083333
+export_packets: 202.756668
+export_rtr: 0.004515
+export_rtt: 33343.632812
+export_srt: 73818.859375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619358600
+export_bytes: 29859.373047
+export_flows: 9.806666
+export_packets: 60.503334
+export_rtr: 0.009732
+export_rtt: 11166.342773
+export_srt: 65095.179688
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619358900
+export_bytes: 40562.613281
+export_flows: 10.056666
+export_packets: 72.396667
+export_rtr: 0.022573
+export_rtt: 14670.977539
+export_srt: 74232.976562
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619359200
+export_bytes: 30058.410156
+export_flows: 9.933333
+export_packets: 60.733334
+export_rtr: 0.017588
+export_rtt: 15937.582031
+export_srt: 80712.382812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619359500
+export_bytes: 40419.800781
+export_flows: 9.886666
+export_packets: 73.739998
+export_rtr: 0.012531
+export_rtt: 22425.570312
+export_srt: 72793.828125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619359800
+export_bytes: 30242.333984
+export_flows: 9.876667
+export_packets: 60.840000
+export_rtr: 0.012019
+export_rtt: 14038.602539
+export_srt: 66444.632812
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619360100
+export_bytes: 30796.550781
+export_flows: 10.000000
+export_packets: 62.959999
+export_rtr: 0.006757
+export_rtt: 14021.365234
+export_srt: 76000.085938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619360400
+export_bytes: 30022.462891
+export_flows: 9.890000
+export_packets: 60.536667
+export_rtr: 0.007895
+export_rtt: 17503.062500
+export_srt: 74080.710938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619360700
+export_bytes: 30417.414062
+export_flows: 9.846666
+export_packets: 61.900002
+export_rtr: 0.030516
+export_rtt: 12160.669922
+export_srt: 64398.734375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619361000
+export_bytes: 29875.306641
+export_flows: 9.813334
+export_packets: 60.626667
+export_rtr: 0.009975
+export_rtt: 12471.839844
+export_srt: 65485.863281
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619361300
+export_bytes: 31291.810547
+export_flows: 9.870000
+export_packets: 62.389999
+export_rtr: 0.020833
+export_rtt: 20232.455078
+export_srt: 72324.515625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619361600
+export_bytes: 30733.689453
+export_flows: 10.306666
+export_packets: 63.246666
+export_rtr: 0.041494
+export_rtt: 14181.692383
+export_srt: 61036.085938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619361900
+export_bytes: 30659.966797
+export_flows: 9.886666
+export_packets: 62.473331
+export_rtr: 0.004739
+export_rtt: 15278.667969
+export_srt: 69445.234375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619362200
+export_bytes: 29870.166016
+export_flows: 9.790000
+export_packets: 60.683334
+export_rtr: 0.007500
+export_rtt: 13158.857422
+export_srt: 63146.515625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619362500
+export_bytes: 40807.894531
+export_flows: 10.260000
+export_packets: 73.056664
+export_rtr: 0.020964
+export_rtt: 14568.726562
+export_srt: 67374.640625
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619362800
+export_bytes: 30102.833984
+export_flows: 10.026667
+export_packets: 61.000000
+export_rtr: 0.007009
+export_rtt: 13075.864258
+export_srt: 61664.703125
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619363100
+export_bytes: 40868.808594
+export_flows: 10.186666
+export_packets: 75.459999
+export_rtr: 0.002132
+export_rtt: 12090.969727
+export_srt: 67858.359375
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619363400
+export_bytes: 30524.777344
+export_flows: 9.906667
+export_packets: 61.500000
+export_rtr: 0.031785
+export_rtt: 15584.845703
+export_srt: 67291.710938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619363700
+export_bytes: 31353.429688
+export_flows: 10.256667
+export_packets: 64.000000
+export_rtr: 0.008791
+export_rtt: 16676.628906
+export_srt: 68130.460938
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619364000
+export_bytes: 29636.476562
+export_flows: 9.550000
+export_packets: 59.419998
+export_rtr: 0.011976
+export_rtt: 19832.212891
+export_srt: 82940.398438
+--- received from 127.0.0.1:62740 ---
+timestamp: 1619364300
+export_bytes: 30395.636719
+export_flows: 10.123333
+export_packets: 62.706665
+export_rtr: 0.008475
+export_rtt: 10197.538086
+export_srt: 64186.089844
+^C
