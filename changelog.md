@@ -4,11 +4,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased] - 2025-11-02
 ### Added
+- Added .gitignore to exclude log files from version control.
+- Memory files 
 
 ### Changed
+- Modified nn.c to handle my data as vectors
+- Created better neuron structure in neuron.c and neuron_layer.c
 
 ### Removed
-- Logs deletion
+- Logs deleted
 
 ## 0.0.1 - 2025-11-02
 ### Added

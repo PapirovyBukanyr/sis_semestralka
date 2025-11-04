@@ -23,7 +23,7 @@ $(BINDIR)/net_logger: sender/net_logger.c
 	$(MKDIR_P)
 	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
-$(BINDIR)/analyzer: receiver/main.c receiver/common.c receiver/module1/preproc.c receiver/module1/convertor.c receiver/module2/nn.c receiver/module3/represent.c receiver/module4/ui.c
+$(BINDIR)/analyzer: receiver/main.c receiver/common.c receiver/module1/preproc.c receiver/module1/convertor.c receiver/module2/nn.c receiver/module2/neuron.c receiver/module2/neuron_layer.c receiver/module3/represent.c receiver/module4/ui.c
 	$(MKDIR_P)
 	$(CC) $(CFLAGS) -o $@ $^ -lm $(LDFLAGS)
 

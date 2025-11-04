@@ -23,6 +23,7 @@
   #include <arpa/inet.h>
   #include <netinet/in.h>
   #include <sys/socket.h>
+  #include <sys/time.h>
   #include <unistd.h>
 #endif
 
@@ -143,7 +144,21 @@ int main(int argc, char **argv) {
   me.sin_addr.s_addr = INADDR_ANY;
   if(bind(sock, (struct sockaddr*)&me, sizeof(me))<0){ perror("bind"); CLOSESOCKET(sock); platform_socket_cleanup(); return 1; }
 
-  printf("Simple receiver listening on UDP port %d\n", PORT);
+  /* Initialize module queues and spawn pipeline threads so preproc/nn/represent/ui
+     will actually run and process incoming messages (this causes creation of
+     data/log_history.bin and data/nn_weights.bin). */
+  queue_init(&raw_queue);
+  queue_init(&proc_queue);
+  queue_init(&repr_queue);
+  queue_init(&error_queue);
+
+  pthread_t t_preproc, t_nn, t_repr, t_ui;
+  if(pthread_create(&t_preproc, NULL, preproc_thread, NULL) != 0){ perror("pthread_create preproc"); }
+  if(pthread_create(&t_nn, NULL, nn_thread, NULL) != 0){ perror("pthread_create nn"); }
+  if(pthread_create(&t_repr, NULL, represent_thread, NULL) != 0){ perror("pthread_create represent"); }
+  if(pthread_create(&t_ui, NULL, ui_thread, NULL) != 0){ perror("pthread_create ui"); }
+
+  printf("Simple receiver listening on UDP port %d (pipeline threads started)\n", PORT);
 
   while(1){
     char buf[8192];
@@ -153,11 +168,14 @@ int main(int argc, char **argv) {
     if(n >= (int)sizeof(buf)) n = (int)sizeof(buf)-1;
     buf[n] = '\0';
 
+    /* push the raw received line into the pipeline's raw queue. preproc will
+       parse JSON or legacy CSV and persist history entries as appropriate. */
+    queue_push(&raw_queue, buf);
+
+    /* Also echo for debug */
     recv_msg_t m;
     memset(&m, 0, sizeof(m));
-    /* try parse payload: prefer JSON (starts with '{'), otherwise accept CSV with leading timestamp */
     if(buf[0] == '{'){
-      /* JSON whole payload */
       strncpy(m.payload, buf, sizeof(m.payload)-1);
       m.payload[sizeof(m.payload)-1] = '\0';
       m.ts = 0;
@@ -165,7 +183,6 @@ int main(int argc, char **argv) {
       char *comma = strchr(buf, ',');
       int parsed_ts = 0;
       if(comma){
-        /* check that chars before comma look like a numeric timestamp */
         const char *p = buf; while(*p==' ' || *p=='\t') p++;
         const char *q = comma - 1; while(q>p && (*q==' ' || *q=='\t')) q--;
         int has_digit = 0; const char *r = p;
@@ -182,7 +199,6 @@ int main(int argc, char **argv) {
         }
       }
       if(!parsed_ts){
-        /* fallback: copy full payload and set ts to receive time (seconds) */
         strncpy(m.payload, buf, sizeof(m.payload)-1);
         m.payload[sizeof(m.payload)-1] = '\0';
         #ifdef _WIN32
@@ -195,23 +211,13 @@ int main(int argc, char **argv) {
         #endif
       }
     }
-
-    /* fill source address */
     inet_ntop(AF_INET, &from.sin_addr, m.src_addr, sizeof(m.src_addr));
     m.src_port = ntohs(from.sin_port);
-
-    /* Print the parsed structure to terminal. Try parsing JSON-like numeric fields
-       for any payload (some senders may strip braces or add leading chars). If
-       parsing yields any numeric values, print them; otherwise fall back to raw
-       payload printing. */
     printf("--- received from %s:%d ---\n", m.src_addr, m.src_port);
     data_point_t dp; parse_json_to_datapoint(m.payload, &dp);
-    /* check if parsing produced at least one numeric value (timestamp or export_bytes) */
     int has_timestamp = !isnan(dp.timestamp);
     int has_export_bytes = !isnan(dp.export_bytes);
     if(has_timestamp || has_export_bytes || !isnan(dp.export_flows) || !isnan(dp.export_packets) || !isnan(dp.export_rtr) || !isnan(dp.export_rtt) || !isnan(dp.export_srt)){
-      /* if JSON had a timestamp, use it for m.ts (seconds)
-         otherwise keep previously-determined m.ts */
       if(has_timestamp) m.ts = (long long)dp.timestamp;
       printf("timestamp: %lld\n", m.ts);
       printf("export_bytes: %.6f\n", dp.export_bytes);

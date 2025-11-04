@@ -7,6 +7,8 @@
 #include <ctype.h>
 #include "../module2/nn.h"
 #include "../module3/represent.h"
+#include <stdint.h>
+#include <math.h>
 
 // We'll receive raw lines from a queue (provided via arg)
 extern str_queue_t raw_queue;
@@ -44,6 +46,22 @@ void* preproc_thread(void *arg){
                 ts,
                 dp.export_bytes, dp.export_flows, dp.export_packets,
                 dp.export_rtr, dp.export_rtt, dp.export_srt);
+            /* persist history entry (ts + normalized inputs) to binary history file used by NN */
+            {
+                /* normalization must match NN normalization: in0 = export_bytes/1e6, in1 = export_flows/100 */
+                typedef struct { int64_t ts; float in0; float in1; } history_entry_t;
+                history_entry_t he;
+                he.ts = ts;
+                float in0 = (float)(dp.export_bytes / 1000000.0);
+                if(!isfinite(in0) || in0 < 0.0f) in0 = 0.0f;
+                if(in0 > 1.0f) in0 = 1.0f;
+                float in1 = (float)(dp.export_flows / 100.0);
+                if(!isfinite(in1) || in1 < 0.0f) in1 = 0.0f;
+                if(in1 > 1.0f) in1 = 1.0f;
+                he.in0 = in0; he.in1 = in1;
+                FILE *hf = fopen("data/log_history.bin", "ab");
+                if(hf){ fwrite(&he, sizeof(he), 1, hf); fclose(hf); }
+            }
             queue_push(&proc_queue, out);
             free(line);
             continue;
@@ -71,6 +89,18 @@ void* preproc_thread(void *arg){
         // convert to normalized representation (simple CSV)
         char out[256];
         snprintf(out, sizeof(out), "%lld,%d,%d", ts, bs, br);
+        /* persist history entry for legacy CSV inputs using legacy normalization */
+        {
+            typedef struct { int64_t ts; float in0; float in1; } history_entry_t;
+            history_entry_t he;
+            he.ts = ts;
+            float in0 = (float)bs / 2000.0f; if(!isfinite(in0) || in0 < 0.0f) in0 = 0.0f; 
+            if(in0 > 1.0f) in0 = 1.0f;
+            float in1 = (float)br / 2000.0f; if(!isfinite(in1) || in1 < 0.0f) in1 = 0.0f; 
+            if(in1 > 1.0f) in1 = 1.0f;
+            he.in0 = in0; he.in1 = in1;
+            FILE *hf = fopen("data/log_history.bin", "ab"); if(hf){ fwrite(&he, sizeof(he), 1, hf); fclose(hf); }
+        }
         queue_push(&proc_queue, out);
         free(line);
     }
