@@ -22,5 +22,16 @@ void neuron_train_step(const double in[INPUT_N], double target);
 
 /* Last predicted output from the most recent forward/train call */
 double neuron_get_last_prediction(void);
+/* No-op placeholder (was previous content) */
+
+/* Convenience helper: evaluate the network for two scalar inputs.
+ * This constructs the input array and calls neuron_forward. Returns
+ * the network output in [0,1]. Use this from tests or quick checks.
+ */
+static inline double neuron_eval_vals(double in0, double in1){
+	double in[INPUT_N];
+	in[0] = in0; in[1] = in1;
+	return neuron_forward(in, NULL);
+}
 
 #endif /* NEURON_H */

@@ -43,7 +43,6 @@ static history_entry_t *load_history_all(size_t *out_n){
 }
 
 extern str_queue_t proc_queue;
-extern str_queue_t repr_queue;
 
 static double last_acc = 0.0;
 
@@ -120,8 +119,9 @@ void* nn_thread(void *arg){
         // push to represent queue the prediction and ts
         char out[128];
     snprintf(out, sizeof(out), "%lld,%.6f,%.6f", ts, pred, last_acc);
-    /* push to represent queue (repr_queue) so represent_thread consumes predictions */
-    queue_push(&repr_queue, out);
+          /* push prediction back into proc_queue so represent_thread (which reads proc_queue)
+              will consume it and produce the textual representation placed into repr_queue */
+          queue_push(&proc_queue, out);
         free(line);
     }
     /* final save on thread exit */
