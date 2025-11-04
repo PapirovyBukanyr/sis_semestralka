@@ -13,6 +13,7 @@
 #include <string.h>
 #include <pthread.h>
 #include "../common.h"
+#include "../queues.h"
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -32,8 +33,7 @@
 #endif
 
 
-extern str_queue_t repr_queue;
-extern str_queue_t error_queue;
+// queue declarations provided by ../queues.h
 
 #define WIN_W 800
 #define WIN_H 600

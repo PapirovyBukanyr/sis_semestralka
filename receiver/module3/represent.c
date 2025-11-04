@@ -4,10 +4,7 @@
 #include <string.h>
 #include "../common.h"
 #include "../module2/nn.h"
-
-extern str_queue_t proc_queue;
-extern str_queue_t repr_queue;
-extern str_queue_t error_queue;
+#include "../queues.h"
 
 // Simple rule-based mapping from prediction to recommended action.
 static const char* recommend_for(double score){

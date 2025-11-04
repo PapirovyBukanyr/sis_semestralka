@@ -7,42 +7,20 @@
 #include <string.h>
 #include <math.h>
 #include "../common.h"
+#include "../queues.h"
 #include "../module3/represent.h"
 #include "neuron.h"
+#include "history.h"
 #include <errno.h>
 #include <stdint.h>
-
-/* History entry saved to disk: timestamp + two normalized inputs (floats)
-   We store exactly the inputs that the NN consumes to simplify reload/training. */
-typedef struct {
-    int64_t ts;
-    float in0;
-    float in1;
-} history_entry_t;
 
 #define SAVE_WEIGHTS_EVERY 500
 
 /* helper: load all history entries into dynamically allocated array; returns count via out_n
    caller should free returned pointer. */
-static history_entry_t *load_history_all(size_t *out_n){
-    const char *LOG_HISTORY_FILE = "data/log_history.bin";
-    *out_n = 0;
-    FILE *f = fopen(LOG_HISTORY_FILE, "rb");
-    if(!f) return NULL;
-    if(fseek(f, 0, SEEK_END) != 0){ fclose(f); return NULL; }
-    long sz = ftell(f);
-    if(sz <= 0){ fclose(f); return NULL; }
-    size_t count = (size_t)sz / sizeof(history_entry_t);
-    if(fseek(f, 0, SEEK_SET) != 0){ fclose(f); return NULL; }
-    history_entry_t *arr = malloc(sizeof(history_entry_t) * count);
-    if(!arr){ fclose(f); return NULL; }
-    if(fread(arr, sizeof(history_entry_t), count, f) != count){ free(arr); fclose(f); return NULL; }
-    fclose(f);
-    *out_n = count;
-    return arr;
-}
+/* history_load_all implemented in module2/history.c */
 
-extern str_queue_t proc_queue;
+/* proc_queue declared in ../queues.h */
 
 static double last_acc = 0.0;
 
@@ -57,7 +35,7 @@ void* nn_thread(void *arg){
     int correct = 0;
     /* Load history and optionally perform an initial sweep of training */
     size_t hist_n = 0;
-    history_entry_t *hist = load_history_all(&hist_n);
+    history_entry_t *hist = history_load_all(&hist_n);
     if(hist && hist_n > 0){
         for(size_t i=0;i<hist_n;i++){
             double in_init[INPUT_N]; in_init[0] = hist[i].in0; in_init[1] = hist[i].in1;

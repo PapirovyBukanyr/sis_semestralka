@@ -1,6 +1,8 @@
 \
 #include "../common.h"
 #include "convertor.h"
+#include "parser.h"
+#include "../module2/history.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,9 +13,7 @@
 #include <math.h>
 
 // We'll receive raw lines from a queue (provided via arg)
-extern str_queue_t raw_queue;
-extern str_queue_t proc_queue;
-extern str_queue_t error_queue;
+#include "../queues.h"
 
 void* preproc_thread(void *arg){
     (void)arg;
@@ -48,8 +48,6 @@ void* preproc_thread(void *arg){
                 dp.export_rtr, dp.export_rtt, dp.export_srt);
             /* persist history entry (ts + normalized inputs) to binary history file used by NN */
             {
-                /* normalization must match NN normalization: in0 = export_bytes/1e6, in1 = export_flows/100 */
-                typedef struct { int64_t ts; float in0; float in1; } history_entry_t;
                 history_entry_t he;
                 he.ts = ts;
                 float in0 = (float)(dp.export_bytes / 1000000.0);
@@ -59,8 +57,7 @@ void* preproc_thread(void *arg){
                 if(!isfinite(in1) || in1 < 0.0f) in1 = 0.0f;
                 if(in1 > 1.0f) in1 = 1.0f;
                 he.in0 = in0; he.in1 = in1;
-                FILE *hf = fopen("data/log_history.bin", "ab");
-                if(hf){ fwrite(&he, sizeof(he), 1, hf); fclose(hf); }
+                history_append(&he);
             }
             queue_push(&proc_queue, out);
             free(line);
@@ -91,7 +88,6 @@ void* preproc_thread(void *arg){
         snprintf(out, sizeof(out), "%lld,%d,%d", ts, bs, br);
         /* persist history entry for legacy CSV inputs using legacy normalization */
         {
-            typedef struct { int64_t ts; float in0; float in1; } history_entry_t;
             history_entry_t he;
             he.ts = ts;
             float in0 = (float)bs / 2000.0f; if(!isfinite(in0) || in0 < 0.0f) in0 = 0.0f; 
@@ -99,7 +95,7 @@ void* preproc_thread(void *arg){
             float in1 = (float)br / 2000.0f; if(!isfinite(in1) || in1 < 0.0f) in1 = 0.0f; 
             if(in1 > 1.0f) in1 = 1.0f;
             he.in0 = in0; he.in1 = in1;
-            FILE *hf = fopen("data/log_history.bin", "ab"); if(hf){ fwrite(&he, sizeof(he), 1, hf); fclose(hf); }
+            history_append(&he);
         }
         queue_push(&proc_queue, out);
         free(line);
