@@ -118,10 +118,14 @@ void* nn_thread(void *arg){
 
         // push to represent queue the prediction and ts
         char out[128];
-    snprintf(out, sizeof(out), "%lld,%.6f,%.6f", ts, pred, last_acc);
-          /* push prediction back into proc_queue so represent_thread (which reads proc_queue)
-              will consume it and produce the textual representation placed into repr_queue */
-          queue_push(&proc_queue, out);
+     snprintf(out, sizeof(out), "%lld,%.6f,%.6f", ts, pred, last_acc);
+             /* debug: also print the raw prediction line so analyzer process shows NN output
+                 directly in the terminal (helps when rebuilding or when UI is not used) */
+             printf("PRED_OUT:%s\n", out);
+             fflush(stdout);
+             /* push prediction back into proc_queue so represent_thread (which reads proc_queue)
+                 will consume it and produce the textual representation placed into repr_queue */
+             queue_push(&proc_queue, out);
         free(line);
     }
     /* final save on thread exit */

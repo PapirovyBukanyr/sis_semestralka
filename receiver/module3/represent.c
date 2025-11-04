@@ -30,7 +30,11 @@ void* represent_thread(void *arg){
             char out[256];
             const char *rec = recommend_for(pred);
             snprintf(out, sizeof(out), "%lld,%.6f,%s,%.6f", ts, pred, rec, acc);
+            /* push to repr_queue for UI and also print representation to stdout so
+               running analyzer process emits the NN output directly to the terminal */
             queue_push(&repr_queue, out);
+            printf("%s\n", out);
+            fflush(stdout);
         } else {
             // if not matching, forward to error log
             queue_push(&error_queue, line);
