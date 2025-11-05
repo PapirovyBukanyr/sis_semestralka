@@ -11,7 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Changed
 - Modified nn.c to handle my data as vectors
 - Created better neuron structure in neuron.c and neuron_layer.c
-- output via dla and not just terminal
+- Output via dla and not just terminal
+- Makefile fix
 - Changed inner structure to be more clean 
     - working with network in separate files
     - working with history in separate files
