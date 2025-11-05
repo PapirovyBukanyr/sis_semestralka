@@ -2,7 +2,15 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [Unreleased] - 2025-11-02
+## [Unreleased] - 2025-11-06
+### Added
+
+### Changed
+
+### Removed
+
+
+## 0.0.2 - 2025-11-05
 ### Added
 - Added .gitignore to exclude log files from version control.
 - Memory files 
