@@ -8,8 +8,8 @@ SHELL := powershell
 .SHELLFLAGS := -NoProfile -ExecutionPolicy Bypass -Command
 
 # SDL2 detection (optional)
-SDL_CFLAGS := $(shell pkg-config --cflags sdl2 2>$null || echo "")
-SDL_LIBS := $(shell pkg-config --libs sdl2 2>$null || echo "")
+SDL_CFLAGS =
+SDL_LIBS =
 
 # Windows-specific settings
 ifeq ($(OS),Windows_NT)
@@ -30,32 +30,36 @@ RECEIVER_SRCS := $(wildcard receiver/*.c) \
                  $(wildcard receiver/module4/*.c)
 
 # Targets
-.PHONY: all clean run-windows analyzer-sdl
+.PHONY: all clean run-windows analyzer-sdl check-compiler
 
-all: $(BINDIR)/net_logger $(BINDIR)/analyzer
+all: check-compiler $(BINDIR)/net_logger $(BINDIR)/analyzer
+
+check-compiler:
+	# PowerShell: ensure at least one C compiler (gcc, cc, or cl) is available
+	if (-not (Get-Command gcc -ErrorAction SilentlyContinue) -and -not (Get-Command cc -ErrorAction SilentlyContinue) -and -not (Get-Command cl -ErrorAction SilentlyContinue)) { Write-Error "No C compiler found in PATH. Install GCC (MinGW/MSYS) or MSVC and ensure it's on PATH."; exit 1 } else { Write-Output "C compiler found." }
 
 $(BINDIR)/net_logger: sender/net_logger.c
-    $(MKDIR_P)
-    $(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+	$(MKDIR_P)
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 $(BINDIR)/analyzer: $(RECEIVER_SRCS)
-    $(MKDIR_P)
-    $(CC) $(CFLAGS) $(SDL_CFLAGS) -o $@ $^ -lm $(SDL_LIBS) $(LDFLAGS)
+	$(MKDIR_P)
+	$(CC) $(CFLAGS) $(SDL_CFLAGS) -o $@ $^ -lm $(SDL_LIBS) $(LDFLAGS)
 
 # SDL analyzer build
 # ifeq ($(strip $(SDL_LIBS)),)
 # analyzer-sdl:
-#     @echo "SDL2 not found via pkg-config; please install SDL2 dev packages or set LDFLAGS/CFLAGS accordingly."
+#	@echo "SDL2 not found via pkg-config; please install SDL2 dev packages or set LDFLAGS/CFLAGS accordingly."
 # else
 # analyzer-sdl: $(RECEIVER_SRCS)
-#     $(MKDIR_P)
-#     $(CC) $(CFLAGS) $(SDL_CFLAGS) -o $@ $^ -lm $(SDL_LIBS) $(LDFLAGS)
+#	$(MKDIR_P)
+#	$(CC) $(CFLAGS) $(SDL_CFLAGS) -o $@ $^ -lm $(SDL_LIBS) $(LDFLAGS)
 # endif
 
 # Run analyzer script on Windows
 run-windows:
-    powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\\run-analyzer.ps1"
+	powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\\run-analyzer.ps1"
 
 # Clean build artifacts
 clean:
-    Remove-Item -Recurse -Force $(BINDIR)
+	Remove-Item -Recurse -Force $(BINDIR)
