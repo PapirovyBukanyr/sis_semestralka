@@ -48,15 +48,14 @@ void* nn_thread(void *arg){
     }
     int save_counter = 0;
 
+    /* local circular buffer to assemble sequences of length SEQ_LEN */
+    double seq_buf[SEQ_LEN][INPUT_N];
+    int seq_pos = 0;
+    int seq_cnt = 0;
+
     while(1){
         char *line = queue_pop(&proc_queue);
         if(!line) break;
-        /* The pipeline can produce two kinds of normalized lines:
-           1) JSON-based normalized CSV (from convertor):
-              timestamp,export_bytes,export_flows,export_packets,export_rtr,export_rtt,export_srt
-           2) Legacy CSV: timestamp,bs,br
-           Try to parse the new format first and fall back to legacy parsing.
-        */
         long long ts = 0;
         double export_bytes = NAN, export_flows = NAN, export_packets = NAN, export_rtr = NAN, export_rtt = NAN, export_srt = NAN;
         int parsed_new = 0;
@@ -65,9 +64,6 @@ void* nn_thread(void *arg){
         }
         double in[INPUT_N];
         if(parsed_new){
-            /* Normalize new-format inputs. Choose export_bytes and export_flows as NN inputs.
-               Scaling: export_bytes can be large (up to millions), so divide by 1e6.
-               export_flows typically small, divide by 100. Clamp to [0,1]. */
             in[0] = export_bytes / 1000000.0; if(isnan(in[0]) || in[0] < 0) in[0] = 0.0; if(in[0] > 1.0) in[0] = 1.0;
             in[1] = export_flows / 100.0; if(isnan(in[1]) || in[1] < 0) in[1] = 0.0; if(in[1] > 1.0) in[1] = 1.0;
         } else {
@@ -76,34 +72,53 @@ void* nn_thread(void *arg){
                 free(line);
                 continue;
             }
-            /* legacy normalization retained */
             in[0] = (double)bs / 2000.0; if(in[0] < 0) in[0] = 0.0; if(in[0] > 1.0) in[0] = 1.0;
             in[1] = (double)br / 2000.0; if(in[1] < 0) in[1] = 0.0; if(in[1] > 1.0) in[1] = 1.0;
         }
         if(in[0] > 1.0) in[0]=1.0;
         if(in[1] > 1.0) in[1]=1.0;
-        double s = in[0] + in[1];
-        double target = s > 0.6 ? 1.0 : 0.0;
-        neuron_train_step(in, target);
-        // evaluate
-        double pred = neuron_get_last_prediction();
+
+        /* push into local sequence buffer */
+        memcpy(seq_buf[seq_pos], in, sizeof(double)*INPUT_N);
+        seq_pos = (seq_pos + 1) % SEQ_LEN;
+        if(seq_cnt < SEQ_LEN) seq_cnt++;
+        if(seq_cnt < SEQ_LEN){ free(line); continue; } /* need more history */
+
+        /* build concatenated sequence: oldest..newest (length SEQ_LEN) */
+        double seq_in[INPUT_N * SEQ_LEN];
+        int base = seq_pos;
+        for(int s=0;s<SEQ_LEN;s++){
+            int idx = (base + s) % SEQ_LEN;
+            for(int k=0;k<INPUT_N;k++) seq_in[s*INPUT_N + k] = seq_buf[idx][k];
+        }
+        /* target vector is the last element in the sequence (we predict next vector; here train to reproduce last as proxy) */
+        double target_vec[INPUT_N];
+        for(int k=0;k<INPUT_N;k++) target_vec[k] = seq_in[(SEQ_LEN-1)*INPUT_N + k];
+
+        neuron_train_step_seq(seq_in, target_vec);
+
+        /* predict */
+        double pred_vec[INPUT_N];
+        neuron_predict_seq(seq_in, pred_vec);
+
+        /* simple evaluation: consider correct if first component sign matches target threshold */
+        double pred = pred_vec[0];
         int pred_label = pred > 0.5 ? 1 : 0;
-        if(pred_label == (int)target) correct++;
+        double s = seq_in[(SEQ_LEN-1)*INPUT_N + 0] + seq_in[(SEQ_LEN-1)*INPUT_N + 1];
+        double target_label = s > 0.6 ? 1.0 : 0.0;
+        if(pred_label == (int)target_label) correct++;
         total++;
         last_acc = total>0 ? (double)correct/total : 0.0;
-    /* periodically save weights */
-    if(++save_counter >= SAVE_WEIGHTS_EVERY){ neuron_save_weights(); save_counter = 0; }
 
-        // push to represent queue the prediction and ts
-        char out[128];
-     snprintf(out, sizeof(out), "%lld,%.6f,%.6f", ts, pred, last_acc);
-             /* debug: also print the raw prediction line so analyzer process shows NN output
-                 directly in the terminal (helps when rebuilding or when UI is not used) */
-             printf("PRED_OUT:%s\n", out);
-             fflush(stdout);
-             /* push prediction back into proc_queue so represent_thread (which reads proc_queue)
-                 will consume it and produce the textual representation placed into repr_queue */
-             queue_push(&proc_queue, out);
+        if(++save_counter >= SAVE_WEIGHTS_EVERY){ neuron_save_weights(); save_counter = 0; }
+
+        /* push to represent queue the prediction vector and accuracy */
+        char out[256];
+        /* format: ts, pred0, pred1, acc */
+        snprintf(out, sizeof(out), "%lld,%.6f,%.6f,%.6f", ts, pred_vec[0], pred_vec[1], last_acc);
+        printf("PRED_OUT:%s\n", out);
+        fflush(stdout);
+        queue_push(&proc_queue, strdup(out));
         free(line);
     }
     /* final save on thread exit */
