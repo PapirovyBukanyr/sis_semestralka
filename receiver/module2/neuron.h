@@ -1,11 +1,38 @@
-#ifndef NEURON_H
-#define NEURON_H
+#ifndef RECEIVER_MODULE2_NEURON_H
+#define RECEIVER_MODULE2_NEURON_H
 
-#include <stdint.h>
 
-#define INPUT_N 2
-#define HIDDEN_N 8
-#define LR 0.001
+
+/* Ensure a default sequence length is available for nn.c and related code.
+   Adjust SEQ_LEN to the intended model sequence length if different.
+*/
+#ifndef SEQ_LEN
+#define SEQ_LEN 8
+#endif
+
+/* Make hidden-size macro names interchangeable to fix mismatches between
+   declaration and implementation files that use H_SZ or HIDDEN_N.
+*/
+#ifdef H_SZ
+  #ifndef HIDDEN_N
+    #define HIDDEN_N H_SZ
+  #endif
+#endif
+
+#ifdef HIDDEN_N
+  #ifndef H_SZ
+    #define H_SZ HIDDEN_N
+  #endif
+#endif
+
+/* Ensure INPUT_N is defined elsewhere; keep existing dependency.
+   Declare neuron_forward using H_SZ so implementations using H_SZ match.
+*/
+double neuron_forward(const double in[INPUT_N], double hidden_out[H_SZ]);
+
+/* Sequence-based training / prediction prototypes referenced in nn.c */
+void neuron_train_step_seq(const double *seq_in, const double *target_vec);
+void neuron_predict_seq(const double *seq_in, double *pred_vec);
 
 /* Initialize weights randomly */
 void neuron_rand_init(void);
@@ -34,4 +61,11 @@ static inline double neuron_eval_vals(double in0, double in1){
 	return neuron_forward(in, NULL);
 }
 
-#endif /* NEURON_H */
+/* Ensure the neuron API sees shared project types/macros (INPUT_N, H_SZ, HIDDEN_N, SEQ_LEN, LR, etc.)
+   by including the central types.h. Also include <stddef.h> so NULL is available.
+   Do not redefine SEQ_LEN here to avoid conflicts with source files that set it.
+*/
+#include <stddef.h>
+#include "../types.h"
+
+#endif /* RECEIVER_MODULE2_NEURON_H */

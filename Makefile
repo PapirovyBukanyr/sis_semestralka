@@ -3,9 +3,10 @@ CC = gcc
 SRCDIR = receiver
 BINDIR = bin
 
-# Use PowerShell as the shell
-SHELL := powershell
-.SHELLFLAGS := -NoProfile -ExecutionPolicy Bypass -Command
+# Note: do not force `SHELL := powershell` here. Let make use the
+# platform-default shell (cmd.exe on Windows) to avoid cross-shell
+# quoting/parsing issues. Recipes below choose Windows- or POSIX-friendly
+# commands via make conditionals.
 
 # SDL2 detection (optional)
 SDL_CFLAGS =
@@ -34,9 +35,19 @@ RECEIVER_SRCS := $(wildcard receiver/*.c) \
 
 all: check-compiler $(BINDIR)/net_logger $(BINDIR)/analyzer
 
+# Check for a C compiler in a cross-platform way. On Windows use PowerShell
+# (or cmd) invocation; on POSIX use sh. Avoid sending `#`-prefixed lines into
+# shells that don't treat `#` as comment (cmd.exe).
+## Check for a C compiler in a cross-platform way. Use make's conditional
+## to choose the appropriate recipe so the shell used to execute recipes
+## doesn't need to parse POSIX `if` syntax.
+ifeq ($(OS),Windows_NT)
 check-compiler:
-	# PowerShell: ensure at least one C compiler (gcc, cc, or cl) is available
-	if (-not (Get-Command gcc -ErrorAction SilentlyContinue) -and -not (Get-Command cc -ErrorAction SilentlyContinue) -and -not (Get-Command cl -ErrorAction SilentlyContinue)) { Write-Error "No C compiler found in PATH. Install GCC (MinGW/MSYS) or MSVC and ensure it's on PATH."; exit 1 } else { Write-Output "C compiler found." }
+	@powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\\check-compiler.ps1"
+else
+check-compiler:
+	@sh -c 'command -v gcc >/dev/null 2>&1 || command -v cc >/dev/null 2>&1 || command -v clang >/dev/null 2>&1 || { echo "No C compiler found in PATH. Install GCC or clang."; exit 1; }'
+endif
 
 $(BINDIR)/net_logger: sender/net_logger.c
 	$(MKDIR_P)

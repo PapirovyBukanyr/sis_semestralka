@@ -14,7 +14,7 @@
 #include <errno.h>
 #include <stdint.h>
 
-#define SAVE_WEIGHTS_EVERY 500
+#define SAVE_WEIGHTS_EVERY 1
 
 /* helper: load all history entries into dynamically allocated array; returns count via out_n
    caller should free returned pointer. */
