@@ -1,38 +1,19 @@
-/* === nn.h === */
-#ifndef NN_H
-#define NN_H
+/* === nn_impl.h === */
+#ifndef NN_IMPL_H
+#define NN_IMPL_H
 
+#include "nn.h"
 
-#include <stddef.h>
-#include "nn_params.h"
-
-
-typedef struct {
-double timestamp;
-float export_bytes;
-float export_flows;
-float export_packets;
-float export_rtr;
-float export_rtt;
-float export_srt;
-} data_point_t;
-
-
-typedef struct nn_s nn_t;
-
-
+// Implementations for the neural network (defined in nn_impl.c)
 nn_t* nn_create(const nn_params_t *params);
 void nn_free(nn_t* nn);
 
-
 // Provide input as data_point_t (raw), returns prediction in out vector (length = OUTPUT_SIZE)
-// If target != NULL, it's a pointer to target output (raw values) and online training occurs.
+// If target_raw != NULL, perform online training.
 void nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float* target_raw, float* out_raw);
-
 
 // load/save weights
 int nn_save_weights(nn_t* nn, const char* filename);
 int nn_load_weights(nn_t* nn, const char* filename);
-
 
 #endif

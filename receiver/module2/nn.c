@@ -1,144 +1,295 @@
-\
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include "../common.h"
-#include "../queues.h"
-#include "../module3/represent.h"
-#include "nn_config.h"
+/* === nn.h === */
+#ifndef NN_H
+#define NN_H
+
+#include <stddef.h>
+#include "nn_params.h"
+#include ".//types.h"
+
+
+typedef struct nn_s nn_t;
+
+nn_t* nn_create(const nn_params_t *params);
+void nn_free(nn_t* nn);
+
+// Provide input as data_point_t (raw), returns prediction in out vector (length = OUTPUT_SIZE)
+// If target != NULL, it's a pointer to target output (raw values) and online training occurs.
+void nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float* target_raw, float* out_raw);
+
+// load/save weights
+int nn_save_weights(nn_t* nn, const char* filename);
+int nn_load_weights(nn_t* nn, const char* filename);
+
+#endif
+
+/* === neuron.h === */
+#ifndef NEURON_H
+#define NEURON_H
+
+#include <stddef.h>
+
+typedef struct {
+    size_t in_len; // number of inputs
+    double *w;     // weights length in_len
+    double b;      // bias (C in spec)
+} neuron_t;
+
+neuron_t* neuron_create(size_t in_len);
+void neuron_free(neuron_t* n);
+
+// compute V = A*B + C (dot product + bias)
+double neuron_forward(const neuron_t* n, const double* input);
+
+// gradient update: lr, gradient w.r.t output (dL/dV)
+void neuron_update(neuron_t* n, const double* input, double grad_out, double lr);
+
+// io
+int neuron_write(FILE* f, const neuron_t* n);
+int neuron_read(FILE* f, neuron_t* n);
+
+#endif
+
+/* === neuron.c === */
 #include "neuron.h"
-#include "history.h"
-#include <errno.h>
-#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+#include <math.h>
 
-#define SAVE_WEIGHTS_EVERY 1
+static double drand_unit(){ return (double)rand() / (double)RAND_MAX * 2.0 - 1.0; }
 
-/* helper: load all history entries into dynamically allocated array; returns count via out_n
-   caller should free returned pointer. */
-/* history_load_all implemented in module2/history.c */
+neuron_t* neuron_create(size_t in_len){
+    neuron_t* n = (neuron_t*)calloc(1,sizeof(neuron_t));
+    if(!n) return NULL;
+    n->in_len = in_len;
+    n->w = (double*)malloc(sizeof(double)*in_len);
+    if(!n->w){ free(n); return NULL; }
+    // init small random weights
+    for(size_t i=0;i<in_len;i++) n->w[i] = drand_unit()*0.1;
+    n->b = drand_unit()*0.1;
+    return n;
+}
 
-/* proc_queue declared in ../queues.h */
+void neuron_free(neuron_t* n){ if(!n) return; free(n->w); free(n); }
 
-static double last_acc = 0.0;
+double neuron_forward(const neuron_t* n, const double* input){
+    double s = 0.0;
+    for(size_t i=0;i<n->in_len;i++) s += n->w[i] * input[i];
+    s += n->b;
+    return s; // linear as requested
+}
 
-void* nn_thread(void *arg){
-    (void)arg;
-    /* Try loading previously trained weights; otherwise initialize randomly */
-    neuron_rand_init();
-    if(neuron_load_weights() != 0){
-        /* layer initialization will be random already */
+void neuron_update(neuron_t* n, const double* input, double grad_out, double lr){
+    // grad_out is dL/dV (scalar)
+    for(size_t i=0;i<n->in_len;i++){
+        double g = grad_out * input[i];
+        n->w[i] -= lr * g;
     }
-    int total = 0;
-    int correct = 0;
-    /* Load history and optionally perform an initial sweep of training */
-    size_t hist_n = 0;
-    history_entry_t *hist = history_load_all(&hist_n);
-    if(hist && hist_n > 0){
-        for(size_t i=0;i<hist_n;i++){
-            double in_init[INPUT_N]; in_init[0] = hist[i].in0; in_init[1] = hist[i].in1;
-            /* simple local heuristic label */
-            double s = in_init[0] + in_init[1];
-            double target = s > 0.6 ? 1.0 : 0.0;
-            neuron_train_step(in_init, target);
-        }
-        free(hist);
-    }
-    int save_counter = 0;
+    n->b -= lr * grad_out;
+}
 
-    /* local circular buffer to assemble sequences of length SEQ_LEN */
-    double seq_buf[SEQ_LEN][INPUT_N];
-    int seq_pos = 0;
-    int seq_cnt = 0;
+int neuron_write(FILE* f, const neuron_t* n){
+    if(fwrite(&n->in_len,sizeof(size_t),1,f)!=1) return -1;
+    if(fwrite(n->w,sizeof(double),n->in_len,f)!=n->in_len) return -1;
+    if(fwrite(&n->b,sizeof(double),1,f)!=1) return -1;
+    return 0;
+}
 
-    while(1){
-        char *line = queue_pop(&proc_queue);
-        if(!line) break;
-        long long ts = 0;
-        double export_bytes = NAN, export_flows = NAN, export_packets = NAN, export_rtr = NAN, export_rtt = NAN, export_srt = NAN;
-        int parsed_new = 0;
-        if(sscanf(line, "%lld,%lf,%lf,%lf,%lf,%lf,%lf", &ts, &export_bytes, &export_flows, &export_packets, &export_rtr, &export_rtt, &export_srt) == 7){
-            parsed_new = 1;
-        }
-        double in[INPUT_N];
-        /* record feature-wise scaling used for normalization so we can rescale outputs for usability */
-        double out_scale[INPUT_N];
-        if(parsed_new){
-            out_scale[0] = 1000000.0; out_scale[1] = 100.0;
-            in[0] = export_bytes / out_scale[0]; if(isnan(in[0]) || in[0] < 0) in[0] = 0.0; if(in[0] > 1.0) in[0] = 1.0;
-            in[1] = export_flows / out_scale[1]; if(isnan(in[1]) || in[1] < 0) in[1] = 0.0; if(in[1] > 1.0) in[1] = 1.0;
-        } else {
-            int bs = -1, br = -1;
-            if(sscanf(line, "%lld,%d,%d", &ts, &bs, &br) != 3){
-                free(line);
-                continue;
-            }
-            out_scale[0] = 2000.0; out_scale[1] = 2000.0;
-            in[0] = (double)bs / out_scale[0]; if(in[0] < 0) in[0] = 0.0; if(in[0] > 1.0) in[0] = 1.0;
-            in[1] = (double)br / out_scale[1]; if(in[1] < 0) in[1] = 0.0; if(in[1] > 1.0) in[1] = 1.0;
-        }
-        if(in[0] > 1.0) in[0]=1.0;
-        if(in[1] > 1.0) in[1]=1.0;
+int neuron_read(FILE* f, neuron_t* n){
+    size_t in_len=0;
+    if(fread(&in_len,sizeof(size_t),1,f)!=1) return -1;
+    if(in_len != n->in_len) return -1; // mismatch
+    if(fread(n->w,sizeof(double),n->in_len,f)!=n->in_len) return -1;
+    if(fread(&n->b,sizeof(double),1,f)!=1) return -1;
+    return 0;
+}
 
-        /* push into local sequence buffer */
-        memcpy(seq_buf[seq_pos], in, sizeof(double)*INPUT_N);
-        seq_pos = (seq_pos + 1) % SEQ_LEN;
-        if(seq_cnt < SEQ_LEN) seq_cnt++;
-        if(seq_cnt < SEQ_LEN){ free(line); continue; } /* need more history */
+/* === h_layer.h === */
+#ifndef H_LAYER_H
+#define H_LAYER_H
 
-        /* build concatenated sequence: oldest..newest (length SEQ_LEN) */
-        double seq_in[INPUT_N * SEQ_LEN];
-        int base = seq_pos;
-        for(int s=0;s<SEQ_LEN;s++){
-            int idx = (base + s) % SEQ_LEN;
-            for(int k=0;k<INPUT_N;k++) seq_in[s*INPUT_N + k] = seq_buf[idx][k];
-        }
-        /* target vector is the last element in the sequence (we predict next vector; here train to reproduce last as proxy) */
-          /* train to reconstruct the whole concatenated sequence (autoencoder-style)
-              target is full seq_in (length INPUT_N * SEQ_LEN) */
-          double target_vec[INPUT_N * SEQ_LEN];
-          for(int k=0;k<INPUT_N*SEQ_LEN;k++) target_vec[k] = seq_in[k];
-          neuron_train_step_seq(seq_in, target_vec);
+#include <stddef.h>
+#include "neuron.h"
 
-          /* predict full reconstructed sequence */
-                    double pred_vec[INPUT_N * SEQ_LEN];
-                    neuron_predict_seq(seq_in, pred_vec);
+typedef struct {
+    size_t n_neurons;
+    neuron_t **neurons; // array of pointers
+    size_t input_len; // inputs per neuron
+} h_layer_t;
 
-                /* create a scaled copy of predicted values for external use (rescale to original units) */
-                double pred_out_vec[INPUT_N * SEQ_LEN];
-                for(int k=0;k<INPUT_N*SEQ_LEN;k++){
-                        int feat = k % INPUT_N;
-                        pred_out_vec[k] = pred_vec[k] * out_scale[feat];
-                }
+h_layer_t* h_layer_create(size_t n_neurons, size_t input_len);
+void h_layer_free(h_layer_t* L);
 
-                /* simple evaluation: consider correct if first component sign matches target threshold (use normalized value) */
-                double pred = pred_vec[0];
-        int pred_label = pred > 0.5 ? 1 : 0;
-        double s = seq_in[(SEQ_LEN-1)*INPUT_N + 0] + seq_in[(SEQ_LEN-1)*INPUT_N + 1];
-        double target_label = s > 0.6 ? 1.0 : 0.0;
-        if(pred_label == (int)target_label) correct++;
-        total++;
-        last_acc = total>0 ? (double)correct/total : 0.0;
+// forward: input is length input_len, output is preallocated array length n_neurons
+void h_layer_forward(const h_layer_t* L, const double* input, double* output);
 
-        if(++save_counter >= SAVE_WEIGHTS_EVERY){ neuron_save_weights(); save_counter = 0; }
+int h_layer_write(FILE* f, const h_layer_t* L);
+int h_layer_read(FILE* f, h_layer_t* L);
 
-        /* push to represent queue the (rescaled) prediction vector and accuracy */
-        char out[256];
-        /* format: ts, pred_0, pred_1, ..., pred_N-1, acc */
-        int pos = snprintf(out, sizeof(out), "%lld", ts);
-        for(int k=0;k<INPUT_N*SEQ_LEN && pos < (int)sizeof(out)-32;k++){
-            pos += snprintf(out+pos, sizeof(out)-pos, ",%.6f", pred_out_vec[k]);
-        }
-        snprintf(out+pos, sizeof(out)-pos, ",%.6f", last_acc);
-        printf("PRED_OUT:%s\n", out);
-        fflush(stdout);
-        queue_push(&proc_queue, strdup(out));
-        free(line);
-    }
-    /* final save on thread exit */
-    neuron_save_weights();
-    return NULL;
+#endif
+
+/* === h_layer.c === */
+#include "h_layer.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+h_layer_t* h_layer_create(size_t n_neurons, size_t input_len){
+    h_layer_t* L = (h_layer_t*)calloc(1,sizeof(h_layer_t));
+    if(!L) return NULL;
+    L->n_neurons = n_neurons;
+    L->input_len = input_len;
+    L->neurons = (neuron_t**)malloc(sizeof(neuron_t*)*n_neurons);
+    if(!L->neurons){ free(L); return NULL; }
+    for(size_t i=0;i<n_neurons;i++) L->neurons[i] = neuron_create(input_len);
+    return L;
+}
+
+void h_layer_free(h_layer_t* L){ if(!L) return; for(size_t i=0;i<L->n_neurons;i++) neuron_free(L->neurons[i]); free(L->neurons); free(L); }
+
+void h_layer_forward(const h_layer_t* L, const double* input, double* output){
+    for(size_t i=0;i<L->n_neurons;i++) output[i] = neuron_forward(L->neurons[i], input);
+}
+
+int h_layer_write(FILE* f, const h_layer_t* L){
+    if(fwrite(&L->n_neurons,sizeof(size_t),1,f)!=1) return -1;
+    if(fwrite(&L->input_len,sizeof(size_t),1,f)!=1) return -1;
+    for(size_t i=0;i<L->n_neurons;i++) if(neuron_write(f,L->neurons[i])!=0) return -1;
+    return 0;
+}
+
+int h_layer_read(FILE* f, h_layer_t* L){
+    size_t n_neurons=0, input_len=0;
+    if(fread(&n_neurons,sizeof(size_t),1,f)!=1) return -1;
+    if(fread(&input_len,sizeof(size_t),1,f)!=1) return -1;
+    if(n_neurons != L->n_neurons || input_len != L->input_len) return -1;
+    for(size_t i=0;i<L->n_neurons;i++) if(neuron_read(f,L->neurons[i])!=0) return -1;
+    return 0;
+}
+
+/* === nn_params.h === */
+#ifndef NN_PARAMS_H
+#define NN_PARAMS_H
+
+#include <stddef.h>
+#define INPUT_SIZE 6
+#define OUTPUT_SIZE 6
+
+typedef struct {
+    size_t n_hidden_layers;
+    size_t *neurons_per_layer; // length n_hidden_layers
+    double learning_rate;
+    double scales[INPUT_SIZE]; // scale factors for normalization (divide by scale)
+} nn_params_t;
+
+nn_params_t default_nn_params();
+
+#endif
+
+/* === nn_params.c === */
+#include "nn_params.h"
+
+// Scales derived from provided dataset (max absolute values). These map raw->[-1,1] by dividing by scale.
+// export_bytes, export_flows, export_packets, export_rtr, export_rtt, export_srt
+
+nn_params_t default_nn_params(){
+    nn_params_t p;
+    p.n_hidden_layers = 2;
+    p.neurons_per_layer = NULL; // caller will set or use provided
+    p.learning_rate = 1e-6; // small, tune as needed
+    // scales computed from uploaded dataset
+    p.scales[0] = 31075704.787; // export_bytes
+    p.scales[1] = 335.54333333; // export_flows
+    p.scales[2] = 28642.12; // export_packets
+    p.scales[3] = 28.47470817; // export_rtr
+    p.scales[4] = 865677.7584; // export_rtt
+    p.scales[5] = 4782337.7; // export_srt
+    return p;
+}
+
+/* === util.h === */
+#ifndef UTIL_H
+#define UTIL_H
+#include "nn_params.h"
+#include "nn.h"
+
+void normalize_input(const nn_params_t* params, const data_point_t* in, double* out_norm);
+void denormalize_output(const nn_params_t* params, const double* nn_out, float* out_raw);
+
+#endif
+
+/* === util.c === */
+#include "util.h"
+#include <string.h>
+
+void normalize_input(const nn_params_t* params, const data_point_t* in, double* out_norm){
+    // order corresponds to scales
+    out_norm[0] = in->export_bytes / params->scales[0];
+    out_norm[1] = in->export_flows / params->scales[1];
+    out_norm[2] = in->export_packets / params->scales[2];
+    out_norm[3] = in->export_rtr / params->scales[3];
+    out_norm[4] = in->export_rtt / params->scales[4];
+    out_norm[5] = in->export_srt / params->scales[5];
+}
+
+void denormalize_output(const nn_params_t* params, const double* nn_out, float* out_raw){
+    out_raw[0] = (float)(nn_out[0] * params->scales[0]);
+    out_raw[1] = (float)(nn_out[1] * params->scales[1]);
+    out_raw[2] = (float)(nn_out[2] * params->scales[2]);
+    out_raw[3] = (float)(nn_out[3] * params->scales[3]);
+    out_raw[4] = (float)(nn_out[4] * params->scales[4]);
+    out_raw[5] = (float)(nn_out[5] * params->scales[5]);
+}
+
+// The combined-source file was split into separate files.
+// See the individual headers and implementation files in this directory:
+// - nn.h
+// - neuron.h
+// - neuron.c
+// - h_layer.h
+// - h_layer.c
+// - nn_params.h
+// - nn_params.c
+// - nn_impl.c  (nn implementation)
+// NOTE: util.h/c and main.c and the Makefile blocks were intentionally left in the combined source and are
+// not extracted by this automatic split operation per user request.
+
+
+/* === main.c === */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "nn.h"
+#include "nn_params.h"
+#include "util.h"
+
+int main(){
+    nn_params_t params = default_nn_params();
+    size_t neurons_per_layer[] = {32,16};
+    params.n_hidden_layers = 2;
+    params.neurons_per_layer = NULL; // library will use defaults unless you allocate
+
+    nn_t* nn = nn_create(&params);
+    if(!nn){ fprintf(stderr,"Failed to create network\n"); return 1; }
+    // try load existing weights, if not present it's fine
+    if(nn_load_weights(nn, "nn_weights.bin")!=0) fprintf(stderr, "No weights loaded, starting from random init\n");
+
+    // Example usage: create a dummy data_point and run prediction
+    data_point_t dp = {0};
+    dp.export_bytes = 30000.0f;
+    dp.export_flows = 10.0f;
+    dp.export_packets = 1200.0f;
+    dp.export_rtr = 5.0f;
+    dp.export_rtt = 10000.0f;
+    dp.export_srt = 20000.0f;
+
+    float pred[OUTPUT_SIZE];
+    nn_predict_and_maybe_train(nn, &dp, NULL, pred);
+    printf("Predicted (raw) outputs:\n");
+    for(size_t i=0;i<OUTPUT_SIZE;i++) printf(" %f", pred[i]);
+    printf("\n");
+
+    // cleanup
+    nn_free(nn);
+    return 0;
 }

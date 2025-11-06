@@ -1,25 +1,33 @@
-#ifndef RECEIVER_MODULE2_NEURON_H
-#define RECEIVER_MODULE2_NEURON_H
+/* === neuron.h === */
+#ifndef NEURON_H
+#define NEURON_H
 
-#ifdef __cplusplus
-extern "C" {
+
+#include <stddef.h>
+
+
+typedef struct {
+size_t in_len; // number of inputs
+double *w; // weights length in_len
+double b; // bias (C in spec)
+} neuron_t;
+
+
+neuron_t* neuron_create(size_t in_len);
+void neuron_free(neuron_t* n);
+
+
+// compute V = A*B + C (dot product + bias)
+double neuron_forward(const neuron_t* n, const double* input);
+
+
+// gradient update: lr, gradient w.r.t output (dL/dV)
+void neuron_update(neuron_t* n, const double* input, double grad_out, double lr);
+
+
+// io
+int neuron_write(FILE* f, const neuron_t* n);
+int neuron_read(FILE* f, neuron_t* n);
+
+
 #endif
-
-/* Neural network (module2) public API.
- * We use unsized array parameters in the header so including files
- * don't need NN config macros to be visible at parse time.
- */
-void neuron_rand_init(void);
-int neuron_save_weights(void);
-int neuron_load_weights(void);
-void neuron_train_step(const double in[], double target);
-void neuron_train_step_seq(const double in_seq[], const double target[]);
-void neuron_predict_seq(const double in_seq[], double out[]);
-double neuron_forward(const double in[], double hidden_out[]);
-double neuron_get_last_prediction(void);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // RECEIVER_MODULE2_NEURON_H
