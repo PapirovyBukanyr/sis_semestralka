@@ -75,6 +75,23 @@ $(BINDIR)/analyzer: $(RECEIVER_SRCS)
 run-windows:
 	powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\\run-analyzer.ps1"
 
+# Train target: build analyzer, start it and run the synthetic sender to drive online training.
+# On Windows we start analyzer via PowerShell Start-Process (detached) and run the PS sender.
+# On POSIX we background the analyzer and attempt to run the PowerShell script with `pwsh` if available.
+ifeq ($(OS),Windows_NT)
+train: $(BINDIR)/analyzer
+	@echo "Starting analyzer (background)..."
+	@powershell -NoProfile -Command "Start-Process -FilePath '$(BINDIR)\\analyzer' -WindowStyle Hidden"
+	@echo "Running synthetic sender (PowerShell)..."
+	@powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\\send_synthetic.ps1"
+else
+train: $(BINDIR)/analyzer
+	@echo "Starting analyzer (background)..."
+	@$(BINDIR)/analyzer & sleep 1 || true
+	@echo "Running synthetic sender (requires pwsh). If pwsh is not installed, run scripts/send_synthetic.ps1 from a PowerShell shell or use bin/net_logger."
+	@if command -v pwsh >/dev/null 2>&1; then pwsh -NoProfile -File scripts/send_synthetic.ps1; else echo "pwsh not found; aborting synthetic sender."; fi
+endif
+
 # Clean build artifacts
 clean:
 	Remove-Item -Recurse -Force $(BINDIR)

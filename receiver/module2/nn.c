@@ -64,17 +64,21 @@ void* nn_thread(void *arg){
             parsed_new = 1;
         }
         double in[INPUT_N];
+        /* record feature-wise scaling used for normalization so we can rescale outputs for usability */
+        double out_scale[INPUT_N];
         if(parsed_new){
-            in[0] = export_bytes / 1000000.0; if(isnan(in[0]) || in[0] < 0) in[0] = 0.0; if(in[0] > 1.0) in[0] = 1.0;
-            in[1] = export_flows / 100.0; if(isnan(in[1]) || in[1] < 0) in[1] = 0.0; if(in[1] > 1.0) in[1] = 1.0;
+            out_scale[0] = 1000000.0; out_scale[1] = 100.0;
+            in[0] = export_bytes / out_scale[0]; if(isnan(in[0]) || in[0] < 0) in[0] = 0.0; if(in[0] > 1.0) in[0] = 1.0;
+            in[1] = export_flows / out_scale[1]; if(isnan(in[1]) || in[1] < 0) in[1] = 0.0; if(in[1] > 1.0) in[1] = 1.0;
         } else {
             int bs = -1, br = -1;
             if(sscanf(line, "%lld,%d,%d", &ts, &bs, &br) != 3){
                 free(line);
                 continue;
             }
-            in[0] = (double)bs / 2000.0; if(in[0] < 0) in[0] = 0.0; if(in[0] > 1.0) in[0] = 1.0;
-            in[1] = (double)br / 2000.0; if(in[1] < 0) in[1] = 0.0; if(in[1] > 1.0) in[1] = 1.0;
+            out_scale[0] = 2000.0; out_scale[1] = 2000.0;
+            in[0] = (double)bs / out_scale[0]; if(in[0] < 0) in[0] = 0.0; if(in[0] > 1.0) in[0] = 1.0;
+            in[1] = (double)br / out_scale[1]; if(in[1] < 0) in[1] = 0.0; if(in[1] > 1.0) in[1] = 1.0;
         }
         if(in[0] > 1.0) in[0]=1.0;
         if(in[1] > 1.0) in[1]=1.0;
@@ -93,17 +97,25 @@ void* nn_thread(void *arg){
             for(int k=0;k<INPUT_N;k++) seq_in[s*INPUT_N + k] = seq_buf[idx][k];
         }
         /* target vector is the last element in the sequence (we predict next vector; here train to reproduce last as proxy) */
-        double target_vec[INPUT_N];
-        for(int k=0;k<INPUT_N;k++) target_vec[k] = seq_in[(SEQ_LEN-1)*INPUT_N + k];
+          /* train to reconstruct the whole concatenated sequence (autoencoder-style)
+              target is full seq_in (length INPUT_N * SEQ_LEN) */
+          double target_vec[INPUT_N * SEQ_LEN];
+          for(int k=0;k<INPUT_N*SEQ_LEN;k++) target_vec[k] = seq_in[k];
+          neuron_train_step_seq(seq_in, target_vec);
 
-        neuron_train_step_seq(seq_in, target_vec);
+          /* predict full reconstructed sequence */
+                    double pred_vec[INPUT_N * SEQ_LEN];
+                    neuron_predict_seq(seq_in, pred_vec);
 
-        /* predict */
-        double pred_vec[INPUT_N];
-        neuron_predict_seq(seq_in, pred_vec);
+                /* create a scaled copy of predicted values for external use (rescale to original units) */
+                double pred_out_vec[INPUT_N * SEQ_LEN];
+                for(int k=0;k<INPUT_N*SEQ_LEN;k++){
+                        int feat = k % INPUT_N;
+                        pred_out_vec[k] = pred_vec[k] * out_scale[feat];
+                }
 
-        /* simple evaluation: consider correct if first component sign matches target threshold */
-        double pred = pred_vec[0];
+                /* simple evaluation: consider correct if first component sign matches target threshold (use normalized value) */
+                double pred = pred_vec[0];
         int pred_label = pred > 0.5 ? 1 : 0;
         double s = seq_in[(SEQ_LEN-1)*INPUT_N + 0] + seq_in[(SEQ_LEN-1)*INPUT_N + 1];
         double target_label = s > 0.6 ? 1.0 : 0.0;
@@ -113,10 +125,14 @@ void* nn_thread(void *arg){
 
         if(++save_counter >= SAVE_WEIGHTS_EVERY){ neuron_save_weights(); save_counter = 0; }
 
-        /* push to represent queue the prediction vector and accuracy */
+        /* push to represent queue the (rescaled) prediction vector and accuracy */
         char out[256];
-        /* format: ts, pred0, pred1, acc */
-        snprintf(out, sizeof(out), "%lld,%.6f,%.6f,%.6f", ts, pred_vec[0], pred_vec[1], last_acc);
+        /* format: ts, pred_0, pred_1, ..., pred_N-1, acc */
+        int pos = snprintf(out, sizeof(out), "%lld", ts);
+        for(int k=0;k<INPUT_N*SEQ_LEN && pos < (int)sizeof(out)-32;k++){
+            pos += snprintf(out+pos, sizeof(out)-pos, ",%.6f", pred_out_vec[k]);
+        }
+        snprintf(out+pos, sizeof(out)-pos, ",%.6f", last_acc);
         printf("PRED_OUT:%s\n", out);
         fflush(stdout);
         queue_push(&proc_queue, strdup(out));

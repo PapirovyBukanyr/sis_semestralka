@@ -9,16 +9,20 @@
 #define NN_WEIGHTS_FILE "data/nn_weights.bin"
 
 static double last_pred_scalar = 0.0; /* legacy single-value API: store first component */
-static double last_pred_vec[INPUT_N];
+/* new: output dimension = INPUT_N * SEQ_LEN (reconstruct full sequence) */
+#ifndef OUTPUT_N
+#define OUTPUT_N (INPUT_N * SEQ_LEN)
+#endif
+static double last_pred_vec[OUTPUT_N];
 
 /* Structured neuron representation */
 typedef struct { double w[INPUT_N * SEQ_LEN]; double b; } InputNeuron; /* first hidden layer neurons */
 typedef struct { double w[H_SZ]; double b; } HiddenNeuron; /* hidden-layer neuron (weights from previous hidden layer) */
-typedef struct { double w[H_SZ]; double b; } OutNeuron; /* one output neuron per input-dim */
+typedef struct { double w[H_SZ]; double b; } OutNeuron; /* one output neuron */
 
 static InputNeuron input_layer[H_SZ];
 static HiddenNeuron hidden_layers[H_LAYERS-1][H_SZ]; /* transitions between hidden layers */
-static OutNeuron output_layer[INPUT_N];
+static OutNeuron output_layer[OUTPUT_N];
 
 /* internal sequence memory (legacy wrapper compatibility) */
 static double mem_buf[SEQ_LEN][INPUT_N];
@@ -27,20 +31,28 @@ static int mem_pos = 0;
 
 static double sigmoid(double x){ return 1.0 / (1.0 + exp(-x)); }
 
+/* helper clamp used by training updates */
+static inline double clampd(double v, double lo, double hi){ return v < lo ? lo : (v > hi ? hi : v); }
+
 void neuron_rand_init(void){
+    /* Xavier-style initialization for sigmoid activations */
+    int fan_in_input = INPUT_N * SEQ_LEN;
+    double scale_in = sqrt(6.0 / (double)(fan_in_input + H_SZ));
     for(int i=0;i<H_SZ;i++){
-        for(int j=0;j<INPUT_N*SEQ_LEN;j++) input_layer[i].w[j] = ((double)rand()/RAND_MAX - 0.5)*0.1;
-        input_layer[i].b = ((double)rand()/RAND_MAX - 0.5)*0.1;
+        for(int j=0;j<INPUT_N*SEQ_LEN;j++) input_layer[i].w[j] = ((double)rand() / RAND_MAX * 2.0 - 1.0) * scale_in;
+        input_layer[i].b = 0.0;
     }
+    double scale_hidden = sqrt(6.0 / (double)(H_SZ + H_SZ));
     for(int l=0;l<H_LAYERS-1;l++){
         for(int i=0;i<H_SZ;i++){
-            for(int j=0;j<H_SZ;j++) hidden_layers[l][i].w[j] = ((double)rand()/RAND_MAX - 0.5)*0.1;
-            hidden_layers[l][i].b = ((double)rand()/RAND_MAX - 0.5)*0.1;
+            for(int j=0;j<H_SZ;j++) hidden_layers[l][i].w[j] = ((double)rand() / RAND_MAX * 2.0 - 1.0) * scale_hidden;
+            hidden_layers[l][i].b = 0.0;
         }
     }
-    for(int k=0;k<INPUT_N;k++){
-        for(int i=0;i<H_SZ;i++) output_layer[k].w[i] = ((double)rand()/RAND_MAX - 0.5)*0.1;
-        output_layer[k].b = ((double)rand()/RAND_MAX - 0.5)*0.1;
+    double scale_out = sqrt(6.0 / (double)(H_SZ + /*fan_out=*/1));
+    for(int k=0;k<OUTPUT_N;k++){
+        for(int i=0;i<H_SZ;i++) output_layer[k].w[i] = ((double)rand() / RAND_MAX * 2.0 - 1.0) * scale_out;
+        output_layer[k].b = 0.0;
     }
 }
 
@@ -62,8 +74,8 @@ void neuron_predict_seq(const double in_seq[], double out[]){
             hidden[l][i] = sigmoid(s);
         }
     }
-    /* output layer (vector) */
-    for(int k=0;k<INPUT_N;k++){
+    /* output layer (produce OUTPUT_N values) */
+    for(int k=0;k<OUTPUT_N;k++){
         double s = output_layer[k].b;
         for(int i=0;i<H_SZ;i++) s += output_layer[k].w[i] * hidden[H_LAYERS-1][i];
         out[k] = sigmoid(s);
@@ -87,46 +99,67 @@ void neuron_train_step_seq(const double in_seq[], const double target[]){
             hidden[l][i] = sigmoid(s);
         }
     }
-    double out[INPUT_N];
-    for(int k=0;k<INPUT_N;k++){
+    double out[OUTPUT_N];
+    for(int k=0;k<OUTPUT_N;k++){
         double s = output_layer[k].b;
         for(int i=0;i<H_SZ;i++) s += output_layer[k].w[i] * hidden[H_LAYERS-1][i];
         out[k] = sigmoid(s);
     }
-    /* compute output gradients and update output weights */
-    double dout[INPUT_N];
-    for(int k=0;k<INPUT_N;k++) dout[k] = (out[k] - target[k]) * out[k] * (1 - out[k]);
-    for(int k=0;k<INPUT_N;k++){
-        for(int i=0;i<H_SZ;i++) output_layer[k].w[i] -= LR * dout[k] * hidden[H_LAYERS-1][i];
-        output_layer[k].b -= LR * dout[k];
+    /* compute output gradients and update output weights (with simple clipping) */
+    double dout[OUTPUT_N];
+    for(int k=0;k<OUTPUT_N;k++) dout[k] = (out[k] - target[k]) * out[k] * (1 - out[k]);
+    const double MAX_UPDATE = 0.1; /* per-weight max update step */
+    for(int k=0;k<OUTPUT_N;k++){
+        for(int i=0;i<H_SZ;i++){
+            double upd = LR * dout[k] * hidden[H_LAYERS-1][i];
+            upd = clampd(upd, -MAX_UPDATE, MAX_UPDATE);
+            output_layer[k].w[i] -= upd;
+        }
+        double bupd = LR * dout[k];
+        bupd = clampd(bupd, -MAX_UPDATE, MAX_UPDATE);
+        output_layer[k].b -= bupd;
     }
     /* backprop into hidden layers */
     double delta[H_LAYERS][H_SZ];
+    /* last hidden layer deltas */
     for(int i=0;i<H_SZ;i++){
         double dh = 0.0;
-        for(int k=0;k<INPUT_N;k++) dh += dout[k] * output_layer[k].w[i];
+        for(int k=0;k<OUTPUT_N;k++) dh += dout[k] * output_layer[k].w[i];
         delta[H_LAYERS-1][i] = dh * hidden[H_LAYERS-1][i] * (1 - hidden[H_LAYERS-1][i]);
+        /* clamp deltas to avoid instability */
+        delta[H_LAYERS-1][i] = clampd(delta[H_LAYERS-1][i], -100.0, 100.0);
     }
     for(int l=H_LAYERS-2;l>=0;l--){
         for(int i=0;i<H_SZ;i++){
             double dh = 0.0;
             for(int j=0;j<H_SZ;j++) dh += delta[l+1][j] * hidden_layers[l][j].w[i];
             delta[l][i] = dh * hidden[l][i] * (1 - hidden[l][i]);
+            delta[l][i] = clampd(delta[l][i], -100.0, 100.0);
         }
     }
     /* update hidden->hidden weights and biases */
     for(int l=H_LAYERS-2;l>=0;l--){
         for(int i=0;i<H_SZ;i++){
             for(int j=0;j<H_SZ;j++){
-                hidden_layers[l][i].w[j] -= LR * delta[l+1][i] * hidden[l][j];
+                double upd = LR * delta[l+1][i] * hidden[l][j];
+                upd = clampd(upd, -MAX_UPDATE, MAX_UPDATE);
+                hidden_layers[l][i].w[j] -= upd;
             }
-            hidden_layers[l][i].b -= LR * delta[l+1][i];
+            double bupd = LR * delta[l+1][i];
+            bupd = clampd(bupd, -MAX_UPDATE, MAX_UPDATE);
+            hidden_layers[l][i].b -= bupd;
         }
     }
     /* update input->first hidden weights and biases */
     for(int i=0;i<H_SZ;i++){
-        for(int j=0;j<INPUT_N*SEQ_LEN;j++) input_layer[i].w[j] -= LR * delta[0][i] * in_seq[j];
-        input_layer[i].b -= LR * delta[0][i];
+        for(int j=0;j<INPUT_N*SEQ_LEN;j++){
+            double upd = LR * delta[0][i] * in_seq[j];
+            upd = clampd(upd, -MAX_UPDATE, MAX_UPDATE);
+            input_layer[i].w[j] -= upd;
+        }
+        double bupd = LR * delta[0][i];
+        bupd = clampd(bupd, -MAX_UPDATE, MAX_UPDATE);
+        input_layer[i].b -= bupd;
     }
 }
 
@@ -141,8 +174,8 @@ void neuron_train_step(const double in[], double target /* unused */){
         int idx = (base + s) % SEQ_LEN;
         for(int k=0;k<INPUT_N;k++) seq_in[s*INPUT_N + k] = mem_buf[idx][k];
     }
-    double target_vec[INPUT_N];
-    for(int k=0;k<INPUT_N;k++) target_vec[k] = seq_in[(SEQ_LEN-1)*INPUT_N + k];
+    double target_vec[OUTPUT_N];
+    for(int k=0;k<OUTPUT_N;k++) target_vec[k] = seq_in[k];
     neuron_train_step_seq(seq_in, target_vec);
 }
 
@@ -185,7 +218,7 @@ int neuron_save_weights(void){
         }
     }
     /* save output layer */
-    for(int k=0;k<INPUT_N;k++){
+    for(int k=0;k<OUTPUT_N;k++){
         if(fwrite(output_layer[k].w, sizeof(double), H_SZ, f) != H_SZ){ fclose(f); return -1; }
         if(fwrite(&output_layer[k].b, sizeof(double), 1, f) != 1){ fclose(f); return -1; }
     }
@@ -209,7 +242,7 @@ int neuron_load_weights(void){
             if(fread(&hidden_layers[l][i].b, sizeof(double), 1, f) != 1){ fclose(f); return -1; }
         }
     }
-    for(int k=0;k<INPUT_N;k++){
+    for(int k=0;k<OUTPUT_N;k++){
         if(fread(output_layer[k].w, sizeof(double), H_SZ, f) != H_SZ){ fclose(f); return -1; }
         if(fread(&output_layer[k].b, sizeof(double), 1, f) != 1){ fclose(f); return -1; }
     }

@@ -17,16 +17,19 @@
 
 /* Hidden layer configuration */
 #ifndef H_LAYERS
-#define H_LAYERS 10
+/* reduce default depth to avoid vanishing gradients in small datasets */
+#define H_LAYERS 2
 #endif
 
 #ifndef H_SZ
-#define H_SZ 5
+/* slightly larger hidden size for more capacity */
+#define H_SZ 16
 #endif
 
 /* Learning rate for SGD updates */
 #ifndef LR
-#define LR 0.01
+/* smaller learning rate for stability with deeper nets */
+#define LR 0.005
 #endif
 
 #endif /* RECEIVER_MODULE2_NN_CONFIG_H */
