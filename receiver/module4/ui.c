@@ -39,7 +39,7 @@
 #define WIN_H 600
 #define GRAPH_H 360
 #define MAX_HISTORY 512
-
+#ifdef HAVE_SDL
 static double hist[MAX_HISTORY];
 static int hist_n = 0;
 static pthread_mutex_t hist_m = PTHREAD_MUTEX_INITIALIZER;
@@ -65,6 +65,7 @@ static void push_error(const char *s){
     if(err_cnt < 256) err_cnt++; 
     pthread_mutex_unlock(&err_m);
 }
+#endif
 
 #ifdef HAVE_SDL
 static void *repr_reader(void *arg){

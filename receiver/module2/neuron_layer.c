@@ -1,4 +1,5 @@
 #include "neuron.h"
+#include "nn_config.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -6,12 +7,6 @@
 
 /* Persistence filenames (placed in data/ to keep repo layout) */
 #define NN_WEIGHTS_FILE "data/nn_weights.bin"
-
-/* Sequence length (number of past vectors used) */
-#define SEQ_LEN 3
-/* Hidden layers count and size */
-#define H_LAYERS 10
-#define H_SZ 5
 
 static double last_pred_scalar = 0.0; /* legacy single-value API: store first component */
 static double last_pred_vec[INPUT_N];
@@ -23,7 +18,6 @@ typedef struct { double w[H_SZ]; double b; } OutNeuron; /* one output neuron per
 
 static InputNeuron input_layer[H_SZ];
 static HiddenNeuron hidden_layers[H_LAYERS-1][H_SZ]; /* transitions between hidden layers */
-static HiddenNeuron hidden_first_bias[1][H_SZ]; /* biases for first hidden layer are in input_layer.b but keep layout compatibility */
 static OutNeuron output_layer[INPUT_N];
 
 /* internal sequence memory (legacy wrapper compatibility) */
@@ -50,7 +44,7 @@ void neuron_rand_init(void){
     }
 }
 
-void neuron_predict_seq(const double in_seq[INPUT_N * SEQ_LEN], double out[INPUT_N]){
+void neuron_predict_seq(const double in_seq[], double out[]){
     double hidden[H_LAYERS][H_SZ];
     /* first hidden layer using input_layer neurons */
     for(int i=0;i<H_SZ;i++){
@@ -78,7 +72,7 @@ void neuron_predict_seq(const double in_seq[INPUT_N * SEQ_LEN], double out[INPUT
     last_pred_scalar = last_pred_vec[0];
 }
 
-void neuron_train_step_seq(const double in_seq[INPUT_N * SEQ_LEN], const double target[INPUT_N]){
+void neuron_train_step_seq(const double in_seq[], const double target[]){
     double hidden[H_LAYERS][H_SZ];
     /* forward pass (same as predict but store hidden) */
     for(int i=0;i<H_SZ;i++){
@@ -136,7 +130,7 @@ void neuron_train_step_seq(const double in_seq[INPUT_N * SEQ_LEN], const double 
     }
 }
 
-void neuron_train_step(const double in[INPUT_N], double target /* unused */){
+void neuron_train_step(const double in[], double target /* unused */){
     memcpy(mem_buf[mem_pos], in, sizeof(double)*INPUT_N);
     mem_pos = (mem_pos + 1) % SEQ_LEN;
     if(mem_cnt < SEQ_LEN) mem_cnt++;
@@ -152,7 +146,7 @@ void neuron_train_step(const double in[INPUT_N], double target /* unused */){
     neuron_train_step_seq(seq_in, target_vec);
 }
 
-double neuron_forward(const double in[INPUT_N], double hidden_out[H_SZ]){
+double neuron_forward(const double in[], double hidden_out[]){
     memcpy(mem_buf[mem_pos], in, sizeof(double)*INPUT_N);
     mem_pos = (mem_pos + 1) % SEQ_LEN;
     if(mem_cnt < SEQ_LEN) mem_cnt++;

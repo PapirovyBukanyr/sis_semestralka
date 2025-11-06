@@ -30,6 +30,10 @@ RECEIVER_SRCS := $(wildcard receiver/*.c) \
                  $(wildcard receiver/module3/*.c) \
                  $(wildcard receiver/module4/*.c)
 
+# Exclude alternative/duplicate neuron implementation to avoid multiple-definition
+# link errors. The canonical implementation lives in receiver/module2/neuron_layer.c
+RECEIVER_SRCS := $(filter-out receiver/module2/neuron.c,$(RECEIVER_SRCS))
+
 # Targets
 .PHONY: all clean run-windows analyzer-sdl check-compiler
 

@@ -11,8 +11,6 @@
 /* Persistence filenames (placed in data/ to keep repo layout) */
 #define NN_WEIGHTS_FILE "data/nn_weights.bin"
 
-/* Sequence length (number of past vectors used) */
-#define SEQ_LEN 3
 /* Hidden layers count and size */
 #define H_LAYERS 10
 #define H_SZ 5

@@ -9,6 +9,7 @@
 #include "../common.h"
 #include "../queues.h"
 #include "../module3/represent.h"
+#include "nn_config.h"
 #include "neuron.h"
 #include "history.h"
 #include <errno.h>
