@@ -112,12 +112,12 @@ int main(int argc, char **argv){
   inet_pton(AF_INET, SERVER_IP, &srv.sin_addr);
 
   /* parse simple CLI flags: -a <accel>, -1/--once, -s/--append-source */
-  double accel = 300.0;
+  double accel = 50.0;
   int once = 0;
   int append_source = 0;
   int json_mode = 0;
   const char *json_path = NULL;
-  double rate = 1.0; /* packets per second for json mode */
+  double rate = 1000; /* packets per second for json mode */
   const char *src = "data";
   for(int i=1;i<argc;i++){
     if(strcmp(argv[i], "-a")==0 || strcmp(argv[i], "--accel")==0){ if(i+1<argc) { accel = atof(argv[++i]); continue; } }

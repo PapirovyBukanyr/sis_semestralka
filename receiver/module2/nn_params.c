@@ -5,9 +5,11 @@
 
 nn_params_t default_nn_params(){
     nn_params_t p;
-    p.n_hidden_layers = 2;
+    p.n_hidden_layers = 0;
     p.neurons_per_layer = NULL; // caller will set or use provided
-    p.learning_rate = 1e-6; // small, tune as needed
+    // Increase default learning rate for quicker visible online updates during debugging.
+    // Production tuning may want a much smaller value.
+    p.learning_rate = 1e2; // was 1e-6
     // scales computed from uploaded dataset
     p.scales[0] = 31075704.787; // export_bytes
     p.scales[1] = 335.54333333; // export_flows

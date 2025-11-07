@@ -3,20 +3,11 @@
 #define NN_H
 
 
+
 #include <stddef.h>
 #include "nn_params.h"
-
-
-typedef struct {
-double timestamp;
-float export_bytes;
-float export_flows;
-float export_packets;
-float export_rtr;
-float export_rtt;
-float export_srt;
-} data_point_t;
-
+/* Use the shared data_point_t from receiver/types.h to avoid duplicate definitions */
+#include "../types.h"
 
 typedef struct nn_s nn_t;
 
@@ -28,6 +19,9 @@ void nn_free(nn_t* nn);
 // Provide input as data_point_t (raw), returns prediction in out vector (length = OUTPUT_SIZE)
 // If target != NULL, it's a pointer to target output (raw values) and online training occurs.
 void nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float* target_raw, float* out_raw);
+
+/* Thread entrypoint used by the receiver pipeline (created from io.c) */
+void* nn_thread(void* arg);
 
 
 // load/save weights

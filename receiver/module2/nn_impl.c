@@ -47,10 +47,28 @@ nn_t* nn_create(const nn_params_t *p_in){
     // output layer
     nn->output_layer = h_layer_create(OUTPUT_SIZE, prev_size);
     srand((unsigned)time(NULL));
+    // try to load saved weights from disk; ignore errors (fresh start if missing/mismatch)
+    if(nn_load_weights(nn, "nn_weights.bin")==0){
+        fprintf(stderr, "[nn] loaded weights from nn_weights.bin\n");
+    } else {
+        fprintf(stderr, "[nn] no weight file loaded (starting with random weights)\n");
+    }
     return nn;
 }
 
-void nn_free(nn_t* nn){ if(!nn) return; if(nn->neurons_per_layer) free(nn->neurons_per_layer); if(nn->layers){ for(size_t i=0;i<nn->n_layers;i++) h_layer_free(nn->layers[i]); free(nn->layers);} if(nn->output_layer) h_layer_free(nn->output_layer); free(nn); }
+void nn_free(nn_t* nn){
+    if(!nn) return;
+    // try to save weights; best-effort
+    if(nn_save_weights(nn, "nn_weights.bin")==0){
+        fprintf(stderr, "[nn] saved weights to nn_weights.bin\n");
+    } else {
+        fprintf(stderr, "[nn] failed to save weights to nn_weights.bin\n");
+    }
+    if(nn->neurons_per_layer) free(nn->neurons_per_layer);
+    if(nn->layers){ for(size_t i=0;i<nn->n_layers;i++) h_layer_free(nn->layers[i]); free(nn->layers); }
+    if(nn->output_layer) h_layer_free(nn->output_layer);
+    free(nn);
+}
 
 // internal forward producing normalized outputs (double array length OUTPUT_SIZE)
 static void nn_forward(nn_t* nn, const double* input_norm, double* out_norm){
@@ -100,8 +118,16 @@ void nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float* t
                 prev_size = n_neu;
                 for(size_t jj=0;jj<prev_size;jj++) cur[jj]=tmp_in[jj];
             }
-            // update output neuron j
-            neuron_update(nn->output_layer->neurons[j], cur, err, nn->params.learning_rate);
+        // update output neuron j — add lightweight logging of a sample weight/bias
+        {
+        neuron_t* out_n = nn->output_layer->neurons[j];
+        // print a compact debug message showing error and first weight before update
+        fprintf(stderr, "[nn] training neuron %zu err=%f lr=%g w0(before)=%f b(before)=%f\n",
+            j, err, nn->params.learning_rate, out_n->w[0], out_n->b);
+        neuron_update(out_n, cur, err, nn->params.learning_rate);
+        fprintf(stderr, "[nn] neuron %zu w0(after)=%f b(after)=%f\n",
+            j, out_n->w[0], out_n->b);
+        }
             free(cur); free(tmp_in);
         }
         // also update hidden layers weights by a very simple heuristic: nudge them by propagated error averaged

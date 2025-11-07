@@ -4,7 +4,6 @@
 #include "queues.h"
 #include "io.h"
 #include "module1/data_processor.h"
-#include "module1/preproc.h"
 #include "module2/nn.h"
 #include "module3/represent.h"
 #include "module4/ui.h"
@@ -12,6 +11,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+/* Forward declaration for module1's preprocessing thread function expected by
+  pthread_create. The implementation lives in module1 (data_processor.c / parser.c). */
+void *preproc_thread(void *arg);
 
 int run_receiver(void){
   if (platform_socket_init() != 0) {

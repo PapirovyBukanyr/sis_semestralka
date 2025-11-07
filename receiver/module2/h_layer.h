@@ -3,6 +3,7 @@
 #define H_LAYER_H
 
 #include <stddef.h>
+#include <stdio.h>
 #include "neuron.h"
 
 typedef struct {
