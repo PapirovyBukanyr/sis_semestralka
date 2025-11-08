@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
+#include "../log.h"
 
 struct nn_s{
     nn_params_t params;
@@ -46,12 +48,13 @@ nn_t* nn_create(const nn_params_t *p_in){
     }
     // output layer
     nn->output_layer = h_layer_create(OUTPUT_SIZE, prev_size);
+    /* seed RNG early (before neuron_create in layers) so initial weights are randomized */
     srand((unsigned)time(NULL));
     // try to load saved weights from disk; ignore errors (fresh start if missing/mismatch)
     if(nn_load_weights(nn, "nn_weights.bin")==0){
-        fprintf(stderr, "[nn] loaded weights from nn_weights.bin\n");
+        LOG_INFO("[nn] loaded weights from nn_weights.bin\n");
     } else {
-        fprintf(stderr, "[nn] no weight file loaded (starting with random weights)\n");
+        LOG_INFO("[nn] no weight file loaded (starting with random weights)\n");
     }
     return nn;
 }
@@ -60,9 +63,9 @@ void nn_free(nn_t* nn){
     if(!nn) return;
     // try to save weights; best-effort
     if(nn_save_weights(nn, "nn_weights.bin")==0){
-        fprintf(stderr, "[nn] saved weights to nn_weights.bin\n");
+        LOG_INFO("[nn] saved weights to nn_weights.bin\n");
     } else {
-        fprintf(stderr, "[nn] failed to save weights to nn_weights.bin\n");
+        LOG_ERROR("[nn] failed to save weights to nn_weights.bin\n");
     }
     if(nn->neurons_per_layer) free(nn->neurons_per_layer);
     if(nn->layers){ for(size_t i=0;i<nn->n_layers;i++) h_layer_free(nn->layers[i]); free(nn->layers); }
@@ -91,52 +94,172 @@ static void nn_forward(nn_t* nn, const double* input_norm, double* out_norm){
     free(cur); free(tmp_in);
 }
 
-void nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float* target_raw, float* out_raw){
+double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float* target_raw, float* out_raw){
     double input_norm[INPUT_SIZE];
     normalize_input(&nn->params, in, input_norm);
-    double out_norm[OUTPUT_SIZE];
-    nn_forward(nn, input_norm, out_norm);
-    // if target provided, do simple online SGD using MSE
+
+    /* Build layer size array: input, hidden..., output */
+    size_t n_hidden = nn->n_layers;
+    size_t n_layers_total = n_hidden + 2; /* input + hidden(s) + output */
+    size_t *sizes = (size_t*)malloc(sizeof(size_t)*n_layers_total);
+    if(!sizes) return NAN;
+    sizes[0] = INPUT_SIZE;
+    for(size_t i=0;i<n_hidden;i++) sizes[i+1] = nn->layers[i]->n_neurons;
+    sizes[n_layers_total-1] = OUTPUT_SIZE;
+
+    /* compute offsets and total neurons */
+    size_t *offset = (size_t*)malloc(sizeof(size_t)*n_layers_total);
+    if(!offset){ free(sizes); return NAN; }
+    size_t acc = 0; for(size_t i=0;i<n_layers_total;i++){ offset[i]=acc; acc += sizes[i]; }
+    size_t total_neurons = acc;
+
+    double *acts = (double*)malloc(sizeof(double)*total_neurons);
+    if(!acts){ free(sizes); free(offset); return NAN; }
+
+    /* copy normalized input into activations */
+    for(size_t i=0;i<INPUT_SIZE;i++) acts[offset[0]+i] = input_norm[i];
+
+    /* forward pass through hidden layers and output */
+    for(size_t L=1; L<n_layers_total; L++){
+        double *prev_ptr = &acts[offset[L-1]];
+        size_t cur_n = sizes[L];
+        if(L <= n_hidden){
+            h_layer_t *hl = nn->layers[L-1];
+            for(size_t j=0;j<cur_n;j++) acts[offset[L]+j] = neuron_forward(hl->neurons[j], prev_ptr);
+        } else {
+            h_layer_t *ol = nn->output_layer;
+            for(size_t j=0;j<cur_n;j++) acts[offset[L]+j] = neuron_forward(ol->neurons[j], prev_ptr);
+        }
+    }
+
+    double *out_norm = &acts[offset[n_layers_total-1]];
+
     if(target_raw){
+        /* normalize target into same domain as outputs */
         double target_norm[OUTPUT_SIZE];
         for(size_t i=0;i<OUTPUT_SIZE;i++) target_norm[i] = ((double)target_raw[i]) / nn->params.scales[i];
-        // compute gradients and backprop only through linear layers (simple)
-        // For simplicity we perform a single-layer delta update on output neurons (no deep backprop)
-        for(size_t j=0;j<nn->output_layer->n_neurons;j++){
+
+        /* deltas for all non-input neurons stored in flat array aligned with offset - sizes[0] */
+        size_t deltas_len = total_neurons - sizes[0];
+    double *deltas = (double*)malloc(sizeof(double)*deltas_len);
+    if(!deltas){ free(acts); free(sizes); free(offset); return NAN; }
+
+        /* compute output deltas and cost (MSE/EUCLIDEAN) */
+        size_t out_layer_index = n_layers_total - 1;
+        size_t out_off = offset[out_layer_index] - sizes[0];
+        double sum_sq = 0.0;
+        for(size_t j=0;j<sizes[out_layer_index]; j++){
             double y = out_norm[j];
             double t = target_norm[j];
-            double err = y - t; // dL/dy for 0.5*(y-t)^2
-            // get inputs to output layer (we need forward through hidden to get last activations)
-            // recompute last activation vector
-            size_t prev_size = INPUT_SIZE;
-            double *cur = (double*)malloc(sizeof(double)*1024);
-            double *tmp_in = (double*)malloc(sizeof(double)*1024);
-            for(size_t i=0;i<prev_size;i++) cur[i]=input_norm[i];
-            for(size_t L=0; L<nn->n_layers; L++){
-                size_t n_neu = nn->layers[L]->n_neurons;
-                for(size_t jj=0;jj<n_neu;jj++) tmp_in[jj] = neuron_forward(nn->layers[L]->neurons[jj], cur);
-                prev_size = n_neu;
-                for(size_t jj=0;jj<prev_size;jj++) cur[jj]=tmp_in[jj];
+            double diff = y - t;
+            deltas[out_off + j] = diff; /* dL/dy for 0.5*sum(diff^2) */
+            sum_sq += diff*diff;
+        }
+
+        /* backpropagate through hidden layers (linear activations => derivative 1) */
+        for(int L = (int)n_layers_total-2; L>=1; L--){
+            size_t cur_n = sizes[L];
+            size_t next_n = sizes[L+1];
+            size_t cur_off = offset[L] - sizes[0];
+            size_t next_off = offset[L+1] - sizes[0];
+            /* initialize */
+            for(size_t i=0;i<cur_n;i++) deltas[cur_off + i] = 0.0;
+            if(L == (int)n_hidden){
+                /* next is output layer */
+                h_layer_t *ol = nn->output_layer;
+                for(size_t j=0;j<next_n;j++){
+                    neuron_t *nxt = ol->neurons[j];
+                    double dnext = deltas[next_off + j];
+                    for(size_t i=0;i<cur_n;i++) deltas[cur_off + i] += dnext * nxt->w[i];
+                }
+            } else {
+                h_layer_t *nxtl = nn->layers[L];
+                for(size_t j=0;j<next_n;j++){
+                    neuron_t *nxt = nxtl->neurons[j];
+                    double dnext = deltas[next_off + j];
+                    for(size_t i=0;i<cur_n;i++) deltas[cur_off + i] += dnext * nxt->w[i];
+                }
             }
-        // update output neuron j — add lightweight logging of a sample weight/bias
+        }
+
+        /* Update weights: for each layer 1..last, update neurons using their input activation and delta */
+        for(size_t L=1; L<n_layers_total; L++){
+            double *prev_ptr = &acts[offset[L-1]];
+            size_t cur_n = sizes[L];
+            size_t cur_off = offset[L] - sizes[0];
+            if(L <= n_hidden){
+                h_layer_t *hl = nn->layers[L-1];
+                for(size_t j=0;j<cur_n;j++){
+                    neuron_t *nj = hl->neurons[j];
+                    double grad = deltas[cur_off + j];
+                    neuron_update(nj, prev_ptr, grad, nn->params.learning_rate);
+                }
+            } else {
+                h_layer_t *ol = nn->output_layer;
+                for(size_t j=0;j<cur_n;j++){
+                    neuron_t *nj = ol->neurons[j];
+                    double grad = deltas[cur_off + j];
+                    neuron_update(nj, prev_ptr, grad, nn->params.learning_rate);
+                }
+            }
+        }
+
+        /* Debug: compute and print L2 norm of all weights to detect collapse to zero */
         {
-        neuron_t* out_n = nn->output_layer->neurons[j];
-        // print a compact debug message showing error and first weight before update
-        fprintf(stderr, "[nn] training neuron %zu err=%f lr=%g w0(before)=%f b(before)=%f\n",
-            j, err, nn->params.learning_rate, out_n->w[0], out_n->b);
-        neuron_update(out_n, cur, err, nn->params.learning_rate);
-        fprintf(stderr, "[nn] neuron %zu w0(after)=%f b(after)=%f\n",
-            j, out_n->w[0], out_n->b);
+            double sum_sq_w = 0.0;
+            /* hidden layers */
+            for(size_t L=0; L<nn->n_layers; L++){
+                h_layer_t *hl = nn->layers[L];
+                for(size_t j=0;j<hl->n_neurons;j++){
+                    neuron_t *n = hl->neurons[j];
+                    for(size_t k=0;k<n->in_len;k++) sum_sq_w += n->w[k]*n->w[k];
+                    sum_sq_w += n->b*n->b;
+                }
+            }
+            /* output layer */
+            h_layer_t *ol = nn->output_layer;
+            for(size_t j=0;j<ol->n_neurons;j++){
+                neuron_t *n = ol->neurons[j];
+                for(size_t k=0;k<n->in_len;k++) sum_sq_w += n->w[k]*n->w[k];
+                sum_sq_w += n->b*n->b;
+            }
+            double l2 = sqrt(sum_sq_w);
+            LOG_INFO("[nn-debug] weights L2 norm = %f\n", l2);
         }
-            free(cur); free(tmp_in);
+
+        double cost = sqrt(sum_sq);
+    LOG_INFO("[nn] training: euclidean cost=%f\n", cost);
+
+        /* recompute forward pass with updated weights to return the post-update prediction */
+        for(size_t L=1; L<n_layers_total; L++){
+            double *prev_ptr = &acts[offset[L-1]];
+            size_t cur_n = sizes[L];
+            if(L <= n_hidden){
+                h_layer_t *hl = nn->layers[L-1];
+                for(size_t j=0;j<cur_n;j++) acts[offset[L]+j] = neuron_forward(hl->neurons[j], prev_ptr);
+            } else {
+                h_layer_t *ol = nn->output_layer;
+                for(size_t j=0;j<cur_n;j++) acts[offset[L]+j] = neuron_forward(ol->neurons[j], prev_ptr);
+            }
         }
-        // also update hidden layers weights by a very simple heuristic: nudge them by propagated error averaged
-        // (proper backprop omitted for brevity)
-        // save weights after update
+        /* denormalize updated outputs into out_raw */
+        denormalize_output(&nn->params, out_norm, out_raw);
+
         nn_save_weights(nn, "nn_weights.bin");
+
+        free(deltas);
+        free(acts);
+        free(sizes);
+        free(offset);
+        return cost;
+    } else {
+        /* no training: denormalize and return NAN (no cost computed) */
+        denormalize_output(&nn->params, out_norm, out_raw);
+        free(acts);
+        free(sizes);
+        free(offset);
+        return NAN;
     }
-    // denormalize
-    denormalize_output(&nn->params, out_norm, out_raw);
 }
 
 int nn_save_weights(nn_t* nn, const char* filename){

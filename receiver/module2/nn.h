@@ -18,7 +18,8 @@ void nn_free(nn_t* nn);
 
 // Provide input as data_point_t (raw), returns prediction in out vector (length = OUTPUT_SIZE)
 // If target != NULL, it's a pointer to target output (raw values) and online training occurs.
-void nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float* target_raw, float* out_raw);
+// Returns Euclidean cost after training if target provided, otherwise returns NAN.
+double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float* target_raw, float* out_raw);
 
 /* Thread entrypoint used by the receiver pipeline (created from io.c) */
 void* nn_thread(void* arg);

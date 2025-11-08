@@ -62,8 +62,32 @@ void *preproc_thread(void *arg){
     while(1){
         char *line = queue_pop(&raw_queue);
         if(!line) break; /* queue closed */
-        /* Forward the raw line to the processing queue. queue_push duplicates string. */
-        queue_push(&proc_queue, line);
+
+        /* Parse JSON into data_point_t; if parsing fails, forward raw line for compatibility */
+        data_point_t dp;
+        if(convert_json_to_datapoint(line, &dp)){
+            /* Format as CSV expected by nn_thread: ts,export_bytes,export_flows,export_packets,export_rtr,export_rtt,export_srt
+               Use timestamp as integer ms if available, otherwise 0. */
+            char outbuf[512];
+            long long ts_ms = 0;
+            if(!isnan(dp.timestamp)) ts_ms = (long long)(dp.timestamp * 1000.0);
+            int off = snprintf(outbuf, sizeof(outbuf), "%lld,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f",
+                               ts_ms,
+                               (double)dp.export_bytes,
+                               (double)dp.export_flows,
+                               (double)dp.export_packets,
+                               (double)dp.export_rtr,
+                               (double)dp.export_rtt,
+                               (double)dp.export_srt);
+            /* push duplicated string onto proc_queue */
+            char *p = strdup(outbuf);
+            if(p) queue_push(&proc_queue, p);
+        } else {
+            /* fallback: forward raw line unchanged */
+            queue_push(&proc_queue, line);
+            free(line);
+            continue;
+        }
         free(line);
     }
     return NULL;

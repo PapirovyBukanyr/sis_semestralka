@@ -4,12 +4,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased] - 2025-11-06
 ### Added
+- memory files for storing weights and biases
 
 ### Changed
 - neural network changed to multiple neurons
+- neuron structure changed to hold weights and bias
+- nn first working version
+- logging system updated to use thread-safe logger
 
 ### Removed
-
+- binary files from git, because I plan to save in them key to openAI api
 
 ## 0.0.2 - 2025-11-05
 ### Added

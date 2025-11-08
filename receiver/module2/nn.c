@@ -14,7 +14,8 @@ void nn_free(nn_t* nn);
 
 // Provide input as data_point_t (raw), returns prediction in out vector (length = OUTPUT_SIZE)
 // If target != NULL, it's a pointer to target output (raw values) and online training occurs.
-void nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float* target_raw, float* out_raw);
+// Returns Euclidean cost after training if target provided, otherwise returns NaN.
+double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float* target_raw, float* out_raw);
 
 // load/save weights
 int nn_save_weights(nn_t* nn, const char* filename);
@@ -56,6 +57,8 @@ int neuron_read(FILE* f, neuron_t* n);
 #include <string.h>
 #include <time.h>
 #include <math.h>
+/* thread-safe logger (serialize prints across threads) */
+#include "../log.h"
 
 static double drand_unit(){ return (double)rand() / (double)RAND_MAX * 2.0 - 1.0; }
 
@@ -239,9 +242,9 @@ int main(){
     params.neurons_per_layer = NULL; // library will use defaults unless you allocate
 
     nn_t* nn = nn_create(&params);
-    if(!nn){ fprintf(stderr,"Failed to create network\n"); return 1; }
+    if(!nn){ LOG_ERROR("Failed to create network\n"); return 1; }
     // try load existing weights, if not present it's fine
-    if(nn_load_weights(nn, "nn_weights.bin")!=0) fprintf(stderr, "No weights loaded, starting from random init\n");
+    if(nn_load_weights(nn, "nn_weights.bin")!=0) LOG_INFO("No weights loaded, starting from random init\n");
 
     // Example usage: create a dummy data_point and run prediction
     data_point_t dp = {0};
@@ -253,10 +256,11 @@ int main(){
     dp.export_srt = 20000.0f;
 
     float pred[OUTPUT_SIZE];
-    nn_predict_and_maybe_train(nn, &dp, NULL, pred);
-    printf("Predicted (raw) outputs:\n");
-    for(size_t i=0;i<OUTPUT_SIZE;i++) printf(" %f", pred[i]);
-    printf("\n");
+    double c = nn_predict_and_maybe_train(nn, &dp, NULL, pred);
+    (void)c;
+    LOG_INFO("Predicted (raw) outputs:\n");
+    for(size_t i=0;i<OUTPUT_SIZE;i++) LOG_INFO(" %f", pred[i]);
+    LOG_INFO("\n");
 
     // cleanup
     nn_free(nn);

@@ -7,6 +7,7 @@
 #include "module2/nn.h"
 #include "module3/represent.h"
 #include "module4/ui.h"
+#include "log.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -20,6 +21,9 @@ int run_receiver(void){
   if (platform_socket_init() != 0) {
     return EXIT_FAILURE;
   }
+
+  /* initialize thread-safe logger */
+  log_init();
 
   /* Create UDP socket and bind to PORT on all interfaces */
   socket_t sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -45,7 +49,7 @@ int run_receiver(void){
   if(pthread_create(&t_repr, NULL, represent_thread, NULL) != 0){ perror("pthread_create represent"); }
   if(pthread_create(&t_ui, NULL, ui_thread, NULL) != 0){ perror("pthread_create ui"); }
 
-  printf("Simple receiver listening on UDP port %d (pipeline threads started)\n", PORT);
+  LOG_INFO("Simple receiver listening on UDP port %d (pipeline threads started)\n", PORT);
 
   while(1){
     char buf[8192];
@@ -100,27 +104,28 @@ int run_receiver(void){
     }
     inet_ntop(AF_INET, &from.sin_addr, m.src_addr, sizeof(m.src_addr));
     m.src_port = ntohs(from.sin_port);
-    printf("--- received from %s:%d ---\n", m.src_addr, m.src_port);
+  LOG_INFO("--- received from %s:%d ---\n", m.src_addr, m.src_port);
     data_point_t dp; parse_json_to_datapoint(m.payload, &dp);
     int has_timestamp = !isnan(dp.timestamp);
     int has_export_bytes = !isnan(dp.export_bytes);
     if(has_timestamp || has_export_bytes || !isnan(dp.export_flows) || !isnan(dp.export_packets) || !isnan(dp.export_rtr) || !isnan(dp.export_rtt) || !isnan(dp.export_srt)){
-      if(has_timestamp) m.ts = (long long)dp.timestamp;
-      printf("timestamp: %lld\n", m.ts);
-      printf("export_bytes: %.6f\n", dp.export_bytes);
-      printf("export_flows: %.6f\n", dp.export_flows);
-      printf("export_packets: %.6f\n", dp.export_packets);
-      printf("export_rtr: %.6f\n", dp.export_rtr);
-      printf("export_rtt: %.6f\n", dp.export_rtt);
-      printf("export_srt: %.6f\n", dp.export_srt);
+  if(has_timestamp) m.ts = (long long)dp.timestamp;
+  LOG_INFO("timestamp: %lld\n", m.ts);
+  LOG_INFO("export_bytes: %.6f\n", dp.export_bytes);
+  LOG_INFO("export_flows: %.6f\n", dp.export_flows);
+  LOG_INFO("export_packets: %.6f\n", dp.export_packets);
+  LOG_INFO("export_rtr: %.6f\n", dp.export_rtr);
+  LOG_INFO("export_rtt: %.6f\n", dp.export_rtt);
+  LOG_INFO("export_srt: %.6f\n", dp.export_srt);
     } else {
-      printf("timestamp: %lld\n", m.ts);
-      printf("payload: %s\n", m.payload);
+      LOG_INFO("timestamp: %lld\n", m.ts);
+      LOG_INFO("payload: %s\n", m.payload);
     }
-    fflush(stdout);
   }
 
   CLOSESOCKET(sock);
   platform_socket_cleanup();
+  /* close logger resources */
+  log_close();
   return EXIT_SUCCESS;
 }
