@@ -1,4 +1,8 @@
-\
+/**
+ * common.h
+ * 
+ * Common definitions for the receiver application, including thread-safe string queue structure and associated functions.
+ */
 #ifndef COMMON_H
 #define COMMON_H
 
@@ -6,13 +10,26 @@
 
 #define PORT 9000
 
-// Simple node for queues
+/**
+ * Node in a string queue.
+ * 
+ * char *line: stored string
+ * struct str_node *next: pointer to next node
+ */
 typedef struct str_node {
     char *line;
     struct str_node *next;
 } str_node_t;
 
-// Thread-safe queue for strings
+/**
+ * Thread-safe string queue structure.
+ * 
+ * str_node_t *head: pointer to the head node
+ * str_node_t *tail: pointer to the tail node
+ * pthread_mutex_t m: mutex for synchronizing access
+ * pthread_cond_t c: condition variable for signaling
+ * int closed: flag indicating if the queue is closed
+ */
 typedef struct str_queue {
     str_node_t *head, *tail;
     pthread_mutex_t m;

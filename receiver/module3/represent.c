@@ -1,3 +1,10 @@
+/*
+ * represent.c
+ *
+ * Converts processed network outputs into human-readable or transmittable
+ * representations and forwards them to the output queues or logging.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,7 +19,6 @@
  * human-readable representation. Returns when the queue is closed.
  *
  * @param arg unused thread argument
- * @return NULL
  */
 void* represent_thread(void* arg){
     (void)arg;

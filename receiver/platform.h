@@ -1,4 +1,8 @@
-/* Platform abstraction for sockets (Windows + POSIX) */
+/**
+ * platform.h
+ *
+ * Platform abstraction helpers (timing, sleep, platform-specific small utilities) used by the receiver.
+ */
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
@@ -8,7 +12,6 @@
   #endif
   #include <winsock2.h>
   #include <ws2tcpip.h>
-  #pragma comment(lib, "Ws2_32.lib")
 #else
   #include <arpa/inet.h>
   #include <netinet/in.h>
@@ -32,8 +35,7 @@
   #endif
 #endif
 
-/* Initialize/cleanup sockets on Windows, no-op on POSIX */
 int platform_socket_init(void);
 void platform_socket_cleanup(void);
 
-#endif /* PLATFORM_H */
+#endif

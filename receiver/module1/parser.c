@@ -1,8 +1,17 @@
+/*
+ * parser.c
+ *
+ * Lightweight JSON/CSV parsing helpers used by the data processing module.
+ */
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifndef PARSER_C_HEADER
+#define PARSER_C_HEADER
 #include "parser.h"
+#endif
 
 /**
  * Locate a numeric value after a JSON key name.

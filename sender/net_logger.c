@@ -25,12 +25,6 @@
   typedef SOCKET socket_t;
   static int socket_init(void){ WSADATA w; return (WSAStartup(MAKEWORD(2,2), &w) == 0) ? 0 : -1; }
   static void socket_cleanup(void){ WSACleanup(); }
-  static long long now_ms(void){
-    FILETIME ft; GetSystemTimeAsFileTime(&ft);
-    unsigned long long t = ((unsigned long long)ft.dwHighDateTime << 32) | ft.dwLowDateTime;
-    const unsigned long long EPOCH_DIFF = 116444736000000000ULL;
-    return (long long)((t - EPOCH_DIFF) / 10000ULL);
-  }
   static void sleep_us(unsigned int usec){ Sleep((usec + 999) / 1000); }
   static void close_socket(socket_t s){ closesocket(s); }
 
@@ -69,7 +63,6 @@
   typedef int socket_t;
   static int socket_init(void){ return 0; }
   static void socket_cleanup(void){}
-  static long long now_ms(void){ struct timeval tv; gettimeofday(&tv, NULL); return (long long)tv.tv_sec * 1000 + tv.tv_usec/1000; }
   static void sleep_us(unsigned int usec){ usleep(usec); }
   static void close_socket(socket_t s){ close(s); }
 

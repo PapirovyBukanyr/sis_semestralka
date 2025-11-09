@@ -1,7 +1,18 @@
-#include <stdlib.h>
-#include <string.h>
+/*
+ * common.c
+ *
+ * Implementation of shared utility functions used throughout the receiver
+ * pipeline (string helpers, small helpers used by modules).
+ */
+#ifndef COMMON_C_HEADER
+#define COMMON_C_HEADER
 
 #include "common.h"
+
+#endif
+
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * Initialize a string queue.

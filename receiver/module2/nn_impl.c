@@ -1,19 +1,43 @@
-#include "nn.h"
-#include "neuron.h"
-#include "h_layer.h"
-#include "nn_params.h"
-#include "util.h"
+/*
+ * nn_impl.c
+ *
+ * Concrete neural-network implementation: constructs layers, invokes
+ * forward passes and ties neurons and layers together into a working model.
+ *
+ */
+
+#ifndef NN_IMPL_C_HEADER
+#define NN_IMPL_C_HEADER
+#include "nn_impl.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include <math.h>
+
 #include "../log.h"
+#include "nn.h"
+#include "neuron.h"
+#include "h_layer.h"
+#include "nn_params.h"
+#include "util.h"
+
 #include <sys/stat.h>
 #ifdef _WIN32
 #include <direct.h>
 #endif
 
+/**
+ * Neural network structure definition.
+ * 
+ * nn_params_t params: network parameters
+ * size_t *neurons_per_layer: array of neuron counts per hidden layer
+ * size_t n_layers: number of hidden layers
+ * h_layer_t **layers: array of hidden layers
+ * h_layer_t *output_layer: output layer
+ */
 struct nn_s{
     nn_params_t params;
     size_t *neurons_per_layer;
@@ -36,7 +60,6 @@ nn_t* nn_create(const nn_params_t *p_in){
     nn_t* nn = (nn_t*)calloc(1,sizeof(nn_t));
     if(!nn) return NULL;
     nn->params = *p_in;
-    /* default neurons per layer if not provided */
     size_t default_neurons[] = {32, 16};
     if(p_in->n_hidden_layers==0){
         nn->n_layers = 0;
@@ -50,7 +73,6 @@ nn_t* nn_create(const nn_params_t *p_in){
             for(size_t i=0;i<nn->n_layers;i++) nn->neurons_per_layer[i] = default_neurons[i%2];
         }
     }
-    // create layers
     size_t prev_size = INPUT_SIZE;
     if(nn->n_layers>0){
         nn->layers = (h_layer_t**)malloc(sizeof(h_layer_t*)*nn->n_layers);
@@ -68,6 +90,7 @@ nn_t* nn_create(const nn_params_t *p_in){
     }
     return nn;
 }
+
 /**
  * Free a neural network instance and persist weights.
  *
@@ -88,34 +111,6 @@ void nn_free(nn_t* nn){
     if(nn->output_layer) h_layer_free(nn->output_layer);
     free(nn);
 }
-/**
- * Internal forward pass producing normalized outputs.
- *
- * This static helper computes the network's output values given normalized
- * inputs and writes them into `out_norm` (length OUTPUT_SIZE).
- *
- * @param nn network instance
- * @param input_norm normalized input vector length INPUT_SIZE
- * @param out_norm preallocated output array length OUTPUT_SIZE
- */
-static void nn_forward(nn_t* nn, const double* input_norm, double* out_norm){
-    double *cur = (double*)malloc(sizeof(double)* (size_t) 1024);
-    double *tmp_in = (double*)malloc(sizeof(double)* 1024);
-    /* allocate temporary buffers (fixed max 1024 entries) and copy input */
-    size_t cur_len = INPUT_SIZE;
-    for(size_t i=0;i<cur_len;i++) cur[i] = input_norm[i];
-    for(size_t L=0; L<nn->n_layers; L++){
-        size_t n_neu = nn->layers[L]->n_neurons;
-        // compute layer output into tmp_in
-        for(size_t j=0;j<n_neu;j++) tmp_in[j] = neuron_forward(nn->layers[L]->neurons[j], cur);
-        // swap
-        cur_len = n_neu;
-        for(size_t j=0;j<cur_len;j++) cur[j]=tmp_in[j];
-    }
-    // output layer
-    for(size_t j=0;j<nn->output_layer->n_neurons;j++) out_norm[j] = neuron_forward(nn->output_layer->neurons[j], cur);
-    free(cur); free(tmp_in);
-}
 
 /**
  * Predict (and optionally train) the neural network for a datapoint.
@@ -134,17 +129,13 @@ static void nn_forward(nn_t* nn, const double* input_norm, double* out_norm){
 double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float* target_raw, float* out_raw){
     double input_norm[INPUT_SIZE];
     normalize_input(&nn->params, in, input_norm);
-
-    /* Build layer size array: input, hidden..., output */
     size_t n_hidden = nn->n_layers;
-    size_t n_layers_total = n_hidden + 2; /* input + hidden(s) + output */
+    size_t n_layers_total = n_hidden + 2; 
     size_t *sizes = (size_t*)malloc(sizeof(size_t)*n_layers_total);
     if(!sizes) return NAN;
     sizes[0] = INPUT_SIZE;
     for(size_t i=0;i<n_hidden;i++) sizes[i+1] = nn->layers[i]->n_neurons;
     sizes[n_layers_total-1] = OUTPUT_SIZE;
-
-    /* compute offsets and total neurons */
     size_t *offset = (size_t*)malloc(sizeof(size_t)*n_layers_total);
     if(!offset){ free(sizes); return NAN; }
     size_t acc = 0; for(size_t i=0;i<n_layers_total;i++){ offset[i]=acc; acc += sizes[i]; }
@@ -152,11 +143,7 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
 
     double *acts = (double*)malloc(sizeof(double)*total_neurons);
     if(!acts){ free(sizes); free(offset); return NAN; }
-
-    /* copy normalized input into activations */
     for(size_t i=0;i<INPUT_SIZE;i++) acts[offset[0]+i] = input_norm[i];
-
-    /* forward pass through hidden layers and output */
     for(size_t L=1; L<n_layers_total; L++){
         double *prev_ptr = &acts[offset[L-1]];
         size_t cur_n = sizes[L];
@@ -171,17 +158,12 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
 
     double *out_norm = &acts[offset[n_layers_total-1]];
 
-    if(target_raw){
-        /* normalize target into same domain as outputs */
+    if(target_raw){     
         double target_norm[OUTPUT_SIZE];
         for(size_t i=0;i<OUTPUT_SIZE;i++) target_norm[i] = ((double)target_raw[i]) / nn->params.scales[i];
-
-        /* deltas for all non-input neurons stored in flat array aligned with offset - sizes[0] */
         size_t deltas_len = total_neurons - sizes[0];
     double *deltas = (double*)malloc(sizeof(double)*deltas_len);
     if(!deltas){ free(acts); free(sizes); free(offset); return NAN; }
-
-        /* compute output deltas and cost (MSE/EUCLIDEAN) */
         size_t out_layer_index = n_layers_total - 1;
         size_t out_off = offset[out_layer_index] - sizes[0];
         double sum_sq = 0.0;
@@ -189,20 +171,16 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
             double y = out_norm[j];
             double t = target_norm[j];
             double diff = y - t;
-            deltas[out_off + j] = diff; /* dL/dy for 0.5*sum(diff^2) */
+            deltas[out_off + j] = diff; 
             sum_sq += diff*diff;
         }
-
-        /* backpropagate through hidden layers (linear activations => derivative 1) */
         for(int L = (int)n_layers_total-2; L>=1; L--){
             size_t cur_n = sizes[L];
             size_t next_n = sizes[L+1];
             size_t cur_off = offset[L] - sizes[0];
             size_t next_off = offset[L+1] - sizes[0];
-            /* initialize */
             for(size_t i=0;i<cur_n;i++) deltas[cur_off + i] = 0.0;
             if(L == (int)n_hidden){
-                /* next is output layer */
                 h_layer_t *ol = nn->output_layer;
                 for(size_t j=0;j<next_n;j++){
                     neuron_t *nxt = ol->neurons[j];
@@ -218,8 +196,6 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
                 }
             }
         }
-
-        /* Update weights: for each layer 1..last, update neurons using their input activation and delta */
         for(size_t L=1; L<n_layers_total; L++){
             double *prev_ptr = &acts[offset[L-1]];
             size_t cur_n = sizes[L];
@@ -240,11 +216,8 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
                 }
             }
         }
-
-        /* Debug: compute and print L2 norm of all weights to detect collapse to zero */
         {
             double sum_sq_w = 0.0;
-            /* hidden layers */
             for(size_t L=0; L<nn->n_layers; L++){
                 h_layer_t *hl = nn->layers[L];
                 for(size_t j=0;j<hl->n_neurons;j++){
@@ -253,7 +226,6 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
                     sum_sq_w += n->b*n->b;
                 }
             }
-            /* output layer */
             h_layer_t *ol = nn->output_layer;
             for(size_t j=0;j<ol->n_neurons;j++){
                 neuron_t *n = ol->neurons[j];
@@ -263,11 +235,8 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
             double l2 = sqrt(sum_sq_w);
             LOG_INFO("[nn-debug] weights L2 norm = %f\n", l2);
         }
-
         double cost = sqrt(sum_sq);
     LOG_INFO("[nn] training: euclidean cost=%f\n", cost);
-
-        /* recompute forward pass with updated weights to return the post-update prediction */
         for(size_t L=1; L<n_layers_total; L++){
             double *prev_ptr = &acts[offset[L-1]];
             size_t cur_n = sizes[L];
@@ -279,7 +248,6 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
                 for(size_t j=0;j<cur_n;j++) acts[offset[L]+j] = neuron_forward(ol->neurons[j], prev_ptr);
             }
         }
-        /* denormalize updated outputs into out_raw */
         denormalize_output(&nn->params, out_norm, out_raw);
 
     nn_save_weights(nn, "data/nn_weights.bin");
@@ -290,7 +258,6 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
         free(offset);
         return cost;
     } else {
-        /* no training: denormalize and return NAN (no cost computed) */
         denormalize_output(&nn->params, out_norm, out_raw);
         free(acts);
         free(sizes);
@@ -311,7 +278,6 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
  * @return 0 on success, -1 on error
  */
 int nn_save_weights(nn_t* nn, const char* filename){
-    /* Ensure parent directory exists (minimal support) */
     const char *slash = strrchr(filename, '/');
 #ifdef _WIN32
     if(!slash) slash = strrchr(filename, '\\');
@@ -328,12 +294,9 @@ int nn_save_weights(nn_t* nn, const char* filename){
         }
     }
     FILE* f = fopen(filename,"wb"); if(!f) return -1;
-    // write header: n_layers, neurons_per_layer
     if(fwrite(&nn->n_layers,sizeof(size_t),1,f)!=1) { fclose(f); return -1; }
     for(size_t i=0;i<nn->n_layers;i++) if(fwrite(&nn->neurons_per_layer[i],sizeof(size_t),1,f)!=1){ fclose(f); return -1; }
-    // write hidden layers
     for(size_t i=0;i<nn->n_layers;i++) if(h_layer_write(f, nn->layers[i])!=0){ fclose(f); return -1; }
-    // write output layer
     if(h_layer_write(f, nn->output_layer)!=0){ fclose(f); return -1; }
     fclose(f);
     return 0;
@@ -355,7 +318,6 @@ static int skip_layer(FILE* fp){
     for(size_t ni=0; ni<n_neurons; ni++){
         size_t in_len = 0;
         if(fread(&in_len, sizeof(size_t), 1, fp) != 1) return -1;
-        /* skip weights (double * in_len) and bias (double) */
         long toskip = (long)(sizeof(double) * in_len + sizeof(double));
         if(fseek(fp, toskip, SEEK_CUR) != 0) return -1;
     }
@@ -377,20 +339,14 @@ int nn_load_weights(nn_t* nn, const char* filename){
     FILE* f = fopen(filename,"rb"); if(!f) return -1;
     size_t file_n_layers = 0;
     if(fread(&file_n_layers, sizeof(size_t), 1, f) != 1){ fclose(f); return -1; }
-
-    /* read neurons_per_layer array from file */
     size_t *file_neurons = NULL;
     if(file_n_layers > 0){
         file_neurons = (size_t*)malloc(sizeof(size_t) * file_n_layers);
         if(!file_neurons){ fclose(f); return -1; }
         if(fread(file_neurons, sizeof(size_t), file_n_layers, f) != file_n_layers){ free(file_neurons); fclose(f); return -1; }
     }
-
-    /* Log diagnostics */
     LOG_INFO("[nn] weights file: hidden_layers_in_file=%zu, expected=%zu\n", file_n_layers, nn->n_layers);
     for(size_t i=0;i<file_n_layers;i++) LOG_INFO("[nn] file layer %zu neurons=%zu\n", i, file_neurons[i]);
-
-    /* Determine how many hidden layers we can load (prefix match) */
     size_t prefix = (file_n_layers < nn->n_layers) ? file_n_layers : nn->n_layers;
     for(size_t i=0;i<prefix;i++){
         if(file_neurons[i] != nn->neurons_per_layer[i]){
@@ -398,11 +354,6 @@ int nn_load_weights(nn_t* nn, const char* filename){
             free(file_neurons); fclose(f); return -1;
         }
     }
-
-    /* helper to skip an unrelated layer in the file (reads structure and advances file ptr) */
-    /* implemented as file-scope static skip_layer() above */
-
-    /* Now read hidden layers: for file layers, if they map to our nn->layers read into them; else skip */
     for(size_t i=0;i<file_n_layers;i++){
         if(i < nn->n_layers){
             if(h_layer_read(f, nn->layers[i]) != 0){ free(file_neurons); fclose(f); return -1; }
@@ -410,14 +361,11 @@ int nn_load_weights(nn_t* nn, const char* filename){
             if(skip_layer(f) != 0){ free(file_neurons); fclose(f); return -1; }
         }
     }
-
-    /* attempt to read output layer from file; only accept if its sizes match */
     int output_loaded = 0;
     if(h_layer_read(f, nn->output_layer) == 0){
         output_loaded = 1;
     } else {
         LOG_INFO("[nn] output layer in file did not match expected output layer; leaving random output layer\n");
-        /* not fatal; we may still have loaded hidden layers */
     }
 
     free(file_neurons);

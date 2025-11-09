@@ -1,3 +1,9 @@
+/*
+ * ui.c
+ *
+ * Minimal user interface / status reporting for the receiver application.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 

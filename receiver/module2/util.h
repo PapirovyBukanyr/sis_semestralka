@@ -1,3 +1,9 @@
+/**
+ * util.h
+ * 
+ * Declarations for utility functions for input normalization and denormalization in module2.
+ */
+
 #ifndef MODULE2_UTIL_H
 #define MODULE2_UTIL_H
 

@@ -1,3 +1,9 @@
+/**
+ * ui.h
+ * 
+ * Declarations for the user interface thread in module4.
+ */
+
 #ifndef UI_H
 #define UI_H
 

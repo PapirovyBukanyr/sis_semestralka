@@ -1,4 +1,8 @@
-/* Central declaration of pipeline queues used across modules */
+/**
+ * queues.h
+ * 
+ * Declarations for the shared queue instances used for inter-thread communication in the receiver pipeline.
+ */
 #ifndef RECEIVER_QUEUES_H
 #define RECEIVER_QUEUES_H
 
@@ -9,4 +13,4 @@ extern str_queue_t proc_queue;
 extern str_queue_t repr_queue;
 extern str_queue_t error_queue;
 
-#endif /* RECEIVER_QUEUES_H */
+#endif

@@ -1,9 +1,22 @@
+/*
+ * data_processor.c
+ *
+ * Data cleaning and feature extraction used to prepare rows for the
+ * neural-network pipeline.
+ */
+
+#ifndef DATA_PROCESSOR_C_HEADER
+#define DATA_PROCESSOR_C_HEADER
+
+#include "data_processor.h"
+
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 
-#include "data_processor.h"
 #include "parser.h"
 #include "../common.h"
 #include "../queues.h"
@@ -98,14 +111,15 @@ void *preproc_thread(void *arg){
             char outbuf[512];
             long long ts_ms = 0;
             if(!isnan(dp.timestamp)) ts_ms = (long long)(dp.timestamp * 1000.0);
-            int off = snprintf(outbuf, sizeof(outbuf), "%lld,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f",
-                               ts_ms,
-                               (double)dp.export_bytes,
-                               (double)dp.export_flows,
-                               (double)dp.export_packets,
-                               (double)dp.export_rtr,
-                               (double)dp.export_rtt,
-                               (double)dp.export_srt);
+            /* We don't need the formatted-length return value here, avoid unused-variable warning */
+            snprintf(outbuf, sizeof(outbuf), "%lld,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f",
+                     ts_ms,
+                     (double)dp.export_bytes,
+                     (double)dp.export_flows,
+                     (double)dp.export_packets,
+                     (double)dp.export_rtr,
+                     (double)dp.export_rtt,
+                     (double)dp.export_srt);
             char *p = strdup(outbuf);
             if(p) queue_push(&proc_queue, p);
         } else {

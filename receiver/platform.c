@@ -1,16 +1,23 @@
-#include <stdio.h>
+/*
+ * platform.c
+ *
+ * Platform abstraction helpers (timing, sleep, platform-specific small
+ * utilities) used by the receiver.
+ */
 
+#ifndef PLATFORM_C_HEADER
+#define PLATFORM_C_HEADER
 #include "platform.h"
-
-#ifdef _WIN32
-#include <windows.h>
 #endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
 
 /**
  * Initialize platform-specific socket subsystem.
- *
- * On Windows this initializes Winsock (WSAStartup). On POSIX systems this is a
- * no-op and returns success.
  *
  * @return 0 on success, non-zero on failure
  */
@@ -27,8 +34,6 @@ int platform_socket_init(void) {
 
 /**
  * Clean up platform-specific socket subsystem.
- *
- * On Windows this calls WSACleanup(). On POSIX systems this is a no-op.
  */
 void platform_socket_cleanup(void){
 #ifdef _WIN32

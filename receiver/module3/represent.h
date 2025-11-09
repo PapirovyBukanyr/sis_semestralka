@@ -1,3 +1,9 @@
+/**
+ * represent.h
+ * 
+ * Declarations for the representation thread in module3.
+ */
+
 #ifndef REPRESENT_H
 #define REPRESENT_H
 

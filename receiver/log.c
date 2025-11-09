@@ -1,8 +1,21 @@
+/*
+ * log.c
+ *
+ * Logging helpers and platform-adapted output routines used by receiver
+ * components.
+ */
+
+#ifndef LOG_C_HEADER
+#define LOG_C_HEADER
+
 #include "log.h"
+#endif
 
 #include <stdarg.h>
 #include <stdlib.h>
 #include <time.h>
+
+#include "platform.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -14,9 +27,6 @@ static pthread_mutex_t log_lock = PTHREAD_MUTEX_INITIALIZER;
 
 /**
  * Initialize logging subsystem resources.
- *
- * On Windows this initializes a CRITICAL_SECTION. On POSIX this initializes
- * a pthread mutex. This function must be called before other logging APIs.
  */
 void log_init(void){
 #ifdef _WIN32
@@ -28,8 +38,6 @@ void log_init(void){
 
 /**
  * Release logging subsystem resources.
- *
- * Cleans up the platform-specific synchronization primitives.
  */
 void log_close(void){
 #ifdef _WIN32

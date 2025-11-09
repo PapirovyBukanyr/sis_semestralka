@@ -1,3 +1,13 @@
+#ifndef NN_THREAD_C_HEADER
+/* === nn_thread.c === */
+/*
+ * nn_thread.c
+ *
+ * Thread entry and coordination code for running the neural-network worker
+ * thread that consumes processed inputs and produces representations.
+ */
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +20,11 @@
 #include "nn_params.h"
 #include "../log.h"
 
-
+/**
+ * Neural-network processing thread entry point.
+ * 
+ * @param arg unused
+ */
 void* nn_thread(void *arg){
     (void)arg;
     nn_params_t params = default_nn_params();

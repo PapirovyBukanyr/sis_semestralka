@@ -1,3 +1,15 @@
+/*
+ * io.c
+ *
+ * I/O helpers and higher-level orchestration for receiving and processing
+ * incoming data. Implements functions used by the receiver main loop.
+ */
+
+#ifndef IO_C_HEADER
+#define IO_C_HEADER
+#include "io.h"
+#endif
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -6,26 +18,40 @@
 #include "types.h"
 #include "common.h"
 #include "queues.h"
-#include "io.h"
 #include "module1/data_processor.h"
 #include "module2/nn.h"
 #include "module3/represent.h"
 #include "module4/ui.h"
 #include "log.h"
 
-/* Forward declaration for module1's preprocessing thread function expected by
-  pthread_create. The implementation lives in module1 (data_processor.c / parser.c). */
+/**
+ * Safe copy helper to avoid -Wstringop-truncation on strncpy and ensure NUL termination.
+ * 
+ * @param dst destination buffer
+ * @param src source string
+ * @param dst_size size of destination buffer
+ */
+static void safe_strncpy(char *dst, const char *src, size_t dst_size){
+  if(dst_size == 0) return;
+  size_t len = strlen(src);
+  if(len > dst_size - 1) len = dst_size - 1;
+  memcpy(dst, src, len);
+  dst[len] = '\0';
+}
+
+/**
+ * Forward declaration for module1's preprocessing thread function expected by pthread_create. The implementation lives in module1 (data_processor.c / parser.c).
+ */
 void *preproc_thread(void *arg);
 
+/**
+ * Run the main receiver loop: initialize sockets, start pipeline threads, receive UDP messages and push them into the processing pipeline.
+ */
 int run_receiver(void){
   if (platform_socket_init() != 0) {
     return EXIT_FAILURE;
   }
-
-  /* initialize thread-safe logger */
   log_init();
-
-  /* Create UDP socket and bind to PORT on all interfaces */
   socket_t sock = socket(AF_INET, SOCK_DGRAM, 0);
   if(sock == (socket_t)-1 || sock == INVALID_SOCKET){ perror("socket"); platform_socket_cleanup(); return 1; }
   struct sockaddr_in me;
@@ -34,23 +60,16 @@ int run_receiver(void){
   me.sin_port = htons(PORT);
   me.sin_addr.s_addr = INADDR_ANY;
   if(bind(sock, (struct sockaddr*)&me, sizeof(me))<0){ perror("bind"); CLOSESOCKET(sock); platform_socket_cleanup(); return 1; }
-
-  /* Initialize module queues and spawn pipeline threads so preproc/nn/represent/ui
-     will actually run and process incoming messages (this causes creation of
-     data/log_history.bin and data/nn_weights.bin). */
   queue_init(&raw_queue);
   queue_init(&proc_queue);
   queue_init(&repr_queue);
   queue_init(&error_queue);
-
   pthread_t t_preproc, t_nn, t_repr, t_ui;
   if(pthread_create(&t_preproc, NULL, preproc_thread, NULL) != 0){ perror("pthread_create preproc"); }
   if(pthread_create(&t_nn, NULL, nn_thread, NULL) != 0){ perror("pthread_create nn"); }
   if(pthread_create(&t_repr, NULL, represent_thread, NULL) != 0){ perror("pthread_create represent"); }
   if(pthread_create(&t_ui, NULL, ui_thread, NULL) != 0){ perror("pthread_create ui"); }
-
   LOG_INFO("Simple receiver listening on UDP port %d (pipeline threads started)\n", PORT);
-
   while(1){
     char buf[8192];
     struct sockaddr_in from; socklen_t flen = sizeof(from);
@@ -58,17 +77,11 @@ int run_receiver(void){
     if(n <= 0) continue;
     if(n >= (int)sizeof(buf)) n = (int)sizeof(buf)-1;
     buf[n] = '\0';
-
-    /* push the raw received line into the pipeline's raw queue. preproc will
-       parse JSON or legacy CSV and persist history entries as appropriate. */
     queue_push(&raw_queue, buf);
-
-    /* Also echo for debug */
     recv_msg_t m;
     memset(&m, 0, sizeof(m));
     if(buf[0] == '{'){
-      strncpy(m.payload, buf, sizeof(m.payload)-1);
-      m.payload[sizeof(m.payload)-1] = '\0';
+      safe_strncpy(m.payload, buf, sizeof(m.payload));
       m.ts = 0;
     } else {
       char *comma = strchr(buf, ',');
@@ -85,13 +98,11 @@ int run_receiver(void){
           long long v = atoll(tbuf);
           if(v != 0){ m.ts = v; parsed_ts = 1; }
           else { m.ts = 0; }
-          strncpy(m.payload, comma+1, sizeof(m.payload)-1);
-          m.payload[sizeof(m.payload)-1] = '\0';
+          safe_strncpy(m.payload, comma+1, sizeof(m.payload));
         }
       }
       if(!parsed_ts){
-        strncpy(m.payload, buf, sizeof(m.payload)-1);
-        m.payload[sizeof(m.payload)-1] = '\0';
+  safe_strncpy(m.payload, buf, sizeof(m.payload));
 #ifdef _WIN32
         SYSTEMTIME st; FILETIME ft; GetSystemTime(&st); SystemTimeToFileTime(&st, &ft);
         unsigned long long t = ((unsigned long long)ft.dwHighDateTime << 32) | ft.dwLowDateTime;
@@ -122,10 +133,8 @@ int run_receiver(void){
       LOG_INFO("payload: %s\n", m.payload);
     }
   }
-
   CLOSESOCKET(sock);
   platform_socket_cleanup();
-  /* close logger resources */
   log_close();
   return EXIT_SUCCESS;
 }
