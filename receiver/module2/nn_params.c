@@ -19,9 +19,15 @@
  */
 nn_params_t default_nn_params(){
     nn_params_t p;
-    p.n_hidden_layers = 4;
-    p.neurons_per_layer = NULL; 
-    p.learning_rate = 1e-1;
+
+    p.n_hidden_layers = 5; // default to 5 hidden layers
+
+
+    p.neurons_per_layer = NULL; // use default layer sizes in nn_create if NULL
+
+    p.learning_rate = 1e-1; // begin learning rate with 0.1, then decrease as needed 
+
+    // scales derived from dataset statistics (max values observed in training data)
     p.scales[0] = 31075704.787;  
     p.scales[1] = 335.54333333;  
     p.scales[2] = 28642.12; 

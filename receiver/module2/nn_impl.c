@@ -60,7 +60,7 @@ nn_t* nn_create(const nn_params_t *p_in){
     nn_t* nn = (nn_t*)calloc(1,sizeof(nn_t));
     if(!nn) return NULL;
     nn->params = *p_in;
-    size_t default_neurons[] = {32, 16};
+    size_t default_neurons[] = {16, 32, 64, 32, 16};
     if(p_in->n_hidden_layers==0){
         nn->n_layers = 0;
         nn->neurons_per_layer = NULL;
@@ -70,7 +70,7 @@ nn_t* nn_create(const nn_params_t *p_in){
         if(p_in->neurons_per_layer!=NULL){
             for(size_t i=0;i<nn->n_layers;i++) nn->neurons_per_layer[i] = p_in->neurons_per_layer[i];
         } else {
-            for(size_t i=0;i<nn->n_layers;i++) nn->neurons_per_layer[i] = default_neurons[i%2];
+            for(size_t i=0;i<nn->n_layers;i++) nn->neurons_per_layer[i] = default_neurons[i%5];
         }
     }
     size_t prev_size = INPUT_SIZE;
