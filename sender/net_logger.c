@@ -27,8 +27,6 @@
   static void socket_cleanup(void){ WSACleanup(); }
   static void sleep_us(unsigned int usec){ Sleep((usec + 999) / 1000); }
   static void close_socket(socket_t s){ closesocket(s); }
-
-  /* Windows: list *.csv files inside directory */
   static int list_csv_files(const char *dir, char ***out_files, size_t *out_n){
     char pattern[1024]; size_t dlen = strlen(dir);
     if(dlen + 8 >= sizeof(pattern)) return -1;
@@ -136,13 +134,17 @@ int main(int argc, char **argv){
   struct sockaddr_in srv; memset(&srv,0,sizeof(srv)); srv.sin_family = AF_INET; srv.sin_port = htons(SERVER_PORT);
   inet_pton(AF_INET, SERVER_IP, &srv.sin_addr);
 
-  /* parse simple CLI flags: -a <accel>, -1/--once, -s/--append-source */
   double accel = 50.0;
   int once = 0;
   int append_source = 0;
   int json_mode = 0;
   const char *json_path = NULL;
-  double rate = 1; /* packets per second for json mode */
+  
+  /* 
+  packets per second for json mode, for learning is good 2, for reading in real-time 0.2 
+  */
+  double rate = 0.2; 
+  
   const char *src = "data";
   for(int i=1;i<argc;i++){
     if(strcmp(argv[i], "-a")==0 || strcmp(argv[i], "--accel")==0){ if(i+1<argc) { accel = atof(argv[++i]); continue; } }

@@ -24,7 +24,7 @@ nn_params_t default_nn_params(){
 
     p.neurons_per_layer = NULL; // use default layer sizes in nn_create if NULL
 
-    p.learning_rate = 1e-2; // begin learning rate with 0.1, then decrease as needed 
+    p.learning_rate = 0.1; // begin learning rate with 0.1, then decrease as needed
 
     // scales derived from dataset statistics (max values observed in training data)
     p.scales[0] = 31075704.787;  
