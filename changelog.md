@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [Unreleased]
+### Added
+- Documentation generation script updated to include author information.
+
+### Changed
+- Fixed include order in nn_thread.c to ensure proper compilation.
+- Reorganized includes in data_processor.c for better readability.
+
+### Removed
+- Removed unnecessary comments
+
 ## 0.1.0 - 2025-11-08
 ### Added
 - memory files for storing weights and biases
