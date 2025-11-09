@@ -520,7 +520,7 @@ corresponding scale factor.
 
 | Module | Functions |
 |---|---|
-| module2 | NN_PARAMS_H |
+| module2 | NN_PARAMS_H, { |
 
 #### NN_PARAMS_H
 
@@ -529,6 +529,18 @@ corresponding scale factor.
 nn.h
 
 Declarations for the neural network interface used in module2.
+```
+
+#### {
+
+
+```text
+Neural network parameters structure.
+
+n_hidden_layers: number of hidden layers
+neurons_per_layer: array of neuron counts per hidden layer (length n_hidden_layers)
+learning_rate: learning rate for online training
+scales: array of scale factors for input normalization (length INPUT_SIZE)
 ```
 
 ### receiver/module2/nn_thread.c
@@ -666,13 +678,11 @@ Declarations for the representation thread in module3.
 
 
 ```text
-UI thread function.
+Simple ASCII dashboard UI.
 
-Consumes messages from the `error_queue` and logs them using the project's
-logging facility. The function returns when the queue is closed.
-
-@param arg unused thread argument
-@return NULL
+Periodically (every second) redraws a small status panel showing queue
+lengths and the last error message. Errors are consumed via a non-blocking
+pop so they are logged and shown but do not block the display refresh.
 ```
 
 ### receiver/module4/ui.h
@@ -699,7 +709,7 @@ Declarations for the user interface thread in module4.
 
 | Module | Functions |
 |---|---|
-| core | queue_close, queue_init, queue_pop, queue_push |
+| core | queue_close, queue_init, queue_length, queue_pop, queue_push, stats_get_avg_error, stats_get_counts, stats_get_window_rates, stats_inc_processed, stats_inc_received, stats_inc_represented, stats_init, stats_record_prediction_error |
 
 #### queue_close
 
@@ -722,6 +732,17 @@ Sets head/tail to NULL, initializes the mutex and condition variable and
 clears the closed flag.
 
 @param q pointer to the queue to initialize
+```
+
+#### queue_length
+
+
+```text
+Return the number of items currently queued. This iterates the list under
+the queue mutex and may be O(n).
+
+@param q queue to inspect
+@return number of items currently in the queue
 ```
 
 #### queue_pop
@@ -750,6 +771,76 @@ not free the provided pointer after calling this function.
 
 @param q target queue
 @param s NUL-terminated C string to push
+```
+
+#### stats_get_avg_error
+
+
+```text
+Get average prediction error over the specified window.
+
+@param window_sec window size in seconds (max STATS_WINDOW_SECONDS)
+@param avg pointer receiving the average error or NAN if no samples
+```
+
+#### stats_get_counts
+
+
+```text
+Get the current statistics counters.
+
+@param received pointer receiving the received messages count or NULL
+@param processed pointer receiving the processed messages count or NULL
+@param represented pointer receiving the represented messages count or NULL
+```
+
+#### stats_get_window_rates
+
+
+```text
+Get per-second rates over the specified window.
+
+@param window_sec window size in seconds (max STATS_WINDOW_SECONDS)
+@param received pointer receiving received rate or NULL
+@param processed pointer receiving processed rate or NULL
+@param represented pointer receiving represented rate or NULL
+```
+
+#### stats_inc_processed
+
+
+```text
+Increment the processed messages counter.
+```
+
+#### stats_inc_received
+
+
+```text
+Increment the received messages counter.
+```
+
+#### stats_inc_represented
+
+
+```text
+Increment the represented messages counter.
+```
+
+#### stats_init
+
+
+```text
+Initialize statistics counters to zero.
+```
+
+#### stats_record_prediction_error
+
+
+```text
+Record a prediction error sample.
+
+@param abs_err absolute error value to record
 ```
 
 ### receiver/common.h

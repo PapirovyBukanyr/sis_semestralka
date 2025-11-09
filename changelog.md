@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+# 1.0.0 - 2025-11-09
+First stable release of the neural network project.
+
+### Added
+- Photo of the ESP8266 device used for real-world application.
+
+### Changed 
+- Improved performance of the training algorithm.
+- Improved UI usability.
+
 ## 0.1.1 - 2025-11-09
 ### Added
 - Documentation generation script updated to include author information.

@@ -64,7 +64,6 @@ int run_receiver(void){
   queue_init(&proc_queue);
   queue_init(&repr_queue);
   queue_init(&error_queue);
-  /* initialize statistics counters */
   stats_init();
   pthread_t t_preproc, t_nn, t_repr, t_ui;
   if(pthread_create(&t_preproc, NULL, preproc_thread, NULL) != 0){ perror("pthread_create preproc"); }
