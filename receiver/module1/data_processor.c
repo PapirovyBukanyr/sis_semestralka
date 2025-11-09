@@ -121,9 +121,13 @@ void *preproc_thread(void *arg){
                      (double)dp.export_rtt,
                      (double)dp.export_srt);
             char *p = strdup(outbuf);
-            if(p) queue_push(&proc_queue, p);
+            if(p) {
+                queue_push(&proc_queue, p);
+                stats_inc_processed();
+            }
         } else {
             queue_push(&proc_queue, line);
+            stats_inc_processed();
             free(line);
             continue;
         }

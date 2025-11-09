@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <math.h>
 
 #include "../common.h"
 #include "../queues.h"
@@ -78,6 +79,11 @@ void* nn_thread(void *arg){
             float cur_raw[OUTPUT_SIZE];
             for(int i=0;i<OUTPUT_SIZE;i++) cur_raw[i] = (float)values[i];
             last_cost = nn_predict_and_maybe_train(nn, &prev_dp, cur_raw, prev_out);
+            /* record average absolute difference between previous prediction and current raw (target) */
+            double sum_abs = 0.0;
+            for(int i=0;i<OUTPUT_SIZE;i++) sum_abs += fabs((double)prev_out[i] - (double)cur_raw[i]);
+            double avg_abs = sum_abs / (double)OUTPUT_SIZE;
+            stats_record_prediction_error(avg_abs);
             /* push the previous prediction, the actual target (current raw) and the cost for clarity */
             char pbuf[512];
             int poff = snprintf(pbuf, sizeof(pbuf), "pred_prev");
@@ -85,6 +91,7 @@ void* nn_thread(void *arg){
             for(int i=0;i<OUTPUT_SIZE;i++) poff += snprintf(pbuf+poff, sizeof(pbuf)-poff, ",target,%.6f", cur_raw[i]);
             poff += snprintf(pbuf+poff, sizeof(pbuf)-poff, ",cost,%.6f", (isnan(last_cost)?-1.0:last_cost));
             queue_push(&repr_queue, pbuf);
+            stats_inc_represented();
             /* build a single line and log it once (avoids interleaving) */
             char dbgbuf[512]; int dbgoff = snprintf(dbgbuf, sizeof(dbgbuf), "[nn] prev_pred vs target: ");
             for(int i=0;i<OUTPUT_SIZE && dbgoff < (int)sizeof(dbgbuf)-32;i++) dbgoff += snprintf(dbgbuf+dbgoff, sizeof(dbgbuf)-dbgoff, "p%.6f ", prev_out[i]);
@@ -103,7 +110,8 @@ void* nn_thread(void *arg){
         for(int i=0;i<OUTPUT_SIZE;i++) off += snprintf(buf+off, sizeof(buf)-off, ",%.6f", out[i]);
         /* append last_cost for visibility (if available) */
         off += snprintf(buf+off, sizeof(buf)-off, ",cost,%.6f", (isnan(last_cost)?-1.0:last_cost));
-        queue_push(&repr_queue, buf);
+    queue_push(&repr_queue, buf);
+    stats_inc_represented();
 
         /* store current as previous for next iteration */
         prev_dp = dp;

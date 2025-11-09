@@ -64,6 +64,8 @@ int run_receiver(void){
   queue_init(&proc_queue);
   queue_init(&repr_queue);
   queue_init(&error_queue);
+  /* initialize statistics counters */
+  stats_init();
   pthread_t t_preproc, t_nn, t_repr, t_ui;
   if(pthread_create(&t_preproc, NULL, preproc_thread, NULL) != 0){ perror("pthread_create preproc"); }
   if(pthread_create(&t_nn, NULL, nn_thread, NULL) != 0){ perror("pthread_create nn"); }
@@ -77,7 +79,8 @@ int run_receiver(void){
     if(n <= 0) continue;
     if(n >= (int)sizeof(buf)) n = (int)sizeof(buf)-1;
     buf[n] = '\0';
-    queue_push(&raw_queue, buf);
+  queue_push(&raw_queue, buf);
+  stats_inc_received();
     recv_msg_t m;
     memset(&m, 0, sizeof(m));
     if(buf[0] == '{'){
