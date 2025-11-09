@@ -1,9 +1,21 @@
-#include "parser.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-/* Helper: find a numeric value after a JSON key name; returns 1 on found */
+#include "parser.h"
+
+/**
+ * Locate a numeric value after a JSON key name.
+ *
+ * Searches for `key` in `s`, finds the following ':' and attempts to parse
+ * a floating-point number. This helper is intentionally permissive and used
+ * for lightweight JSON-like extraction in the receiver pipeline.
+ *
+ * @param s input string to search
+ * @param key key name to find (e.g. "\"timestamp\"")
+ * @param out pointer receiving the parsed double when found
+ * @return 1 if a numeric value was found and parsed, 0 otherwise
+ */
 static int find_json_number(const char *s, const char *key, double *out) {
   const char *p = strstr(s, key);
   if(!p) return 0;
@@ -19,8 +31,18 @@ static int find_json_number(const char *s, const char *key, double *out) {
   *out = v; return 1;
 }
 
+/**
+ * Parse a lightweight JSON-like string into a data_point_t.
+ *
+ * Fields that cannot be found are left as NaN so callers can detect missing
+ * values. Supported keys: timestamp, export_bytes, export_flows,
+ * export_packets, export_rtr, export_rtt, export_srt. Matching accepts keys
+ * with or without surrounding quotes.
+ *
+ * @param s input NUL-terminated string containing JSON-like content
+ * @param d output pointer to data_point_t (will be written with parsed values or NaN)
+ */
 void parse_json_to_datapoint(const char *s, data_point_t *d){
-  /* initialize to NaN */
   d->timestamp = NAN;
   d->export_bytes = NAN;
   d->export_flows = NAN;

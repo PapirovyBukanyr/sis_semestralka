@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
+
 #include "../common.h"
 #include "../queues.h"
 #include "nn.h"
 #include "nn_impl.h"
 #include "nn_params.h"
-
-#include <pthread.h>
 #include "../log.h"
+
 
 void* nn_thread(void *arg){
     (void)arg;
@@ -23,11 +24,19 @@ void* nn_thread(void *arg){
     float prev_out[OUTPUT_SIZE];
     double last_cost = NAN;
 
+    /**
+     * Main neural-network processing thread.
+     *
+     * This thread consumes CSV-formatted lines from `proc_queue`, parses them
+     * into `data_point_t`, runs the neural network to predict and optionally
+     * trains the network online using the previous datapoint as input and the
+     * current raw values as target. Predictions and debug strings are pushed
+     * to `repr_queue`.
+     */
     while(1){
         char *line = queue_pop(&proc_queue);
         if(!line) break;
-        // simple parse: CSV fields; first is ts, rest are floats (we'll map available values)
-        double values[OUTPUT_SIZE];
+    double values[OUTPUT_SIZE];
         for(int i=0;i<OUTPUT_SIZE;i++) values[i]=0.0;
         int idx=0;
         char *tok = strtok(line, ",");

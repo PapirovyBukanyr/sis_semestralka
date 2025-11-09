@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
 #include "platform.h"
 #include "types.h"
 #include "common.h"
@@ -8,10 +12,6 @@
 #include "module3/represent.h"
 #include "module4/ui.h"
 #include "log.h"
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
 /* Forward declaration for module1's preprocessing thread function expected by
   pthread_create. The implementation lives in module1 (data_processor.c / parser.c). */

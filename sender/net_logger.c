@@ -1,15 +1,10 @@
-/*
- CSV sender: reads CSV files from a directory (default "data") or a single file
- and sends each CSV row over UDP to SERVER_IP:SERVER_PORT.
-
- Usage: net_logger [data_path]
-   - If data_path is a file, that file is sent.
-   - If data_path is a directory, all *.csv files inside are sent in lexicographic order.
-
- Timing: CSV rows are expected as `timestamp,<value>` where timestamp is unix seconds.
- The sender waits between rows by (ts_next - ts_prev) / accel seconds (accel defaults to 10.0).
- After all files are sent, the sender loops and repeats.
-*/
+/**
+ * net_logger.c
+ *
+ * Simple CSV/JSON sender used for testing the receiver pipeline. It reads
+ * rows from CSV files (or a JSONL file) and sends them via UDP to a configured
+ * server. Timing between rows can be accelerated for replay.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -97,11 +92,48 @@
   }
 #endif
 
-static void free_files(char **files, size_t n){ if(!files) return; for(size_t i=0;i<n;++i) free(files[i]); free(files); }
+/**
+ * Free an array of heap-allocated filename strings and the array itself.
+ *
+ * If `files` is NULL this is a no-op. Otherwise each entry is freed and the
+ * array container is freed as well.
+ *
+ * @param files array of NUL-terminated strings allocated with malloc/strdup
+ * @param n number of entries in the array
+ */
+static void free_files(char **files, size_t n){
+  if(!files) return;
+  for(size_t i=0;i<n;++i) free(files[i]);
+  free(files);
+}
 
-/* simple comparator for qsort to sort filenames lexicographically */
-static int cmpstr(const void *a, const void *b){ const char *A = *(const char**)a; const char *B = *(const char**)b; return strcmp(A,B); }
+/**
+ * Comparator for qsort that compares two filename pointers lexicographically.
+ *
+ * Expects `a` and `b` to be pointers to `char*` and returns the same
+ * semantics as strcmp so it can be passed directly to qsort.
+ *
+ * @param a pointer to the first element (char**)
+ * @param b pointer to the second element (char**)
+ * @return negative, zero or positive value like strcmp
+ */
+static int cmpstr(const void *a, const void *b){
+  const char *A = *(const char**)a;
+  const char *B = *(const char**)b;
+  return strcmp(A,B);
+}
 
+/**
+ * Program entrypoint for the net logger.
+ *
+ * Parses command-line options, enumerates input CSV/JSON files and streams
+ * their rows over UDP to the configured server. Timing and repeat behaviour
+ * are configurable via flags.
+ *
+ * @param argc argument count
+ * @param argv argument vector
+ * @return 0 on success, non-zero on error
+ */
 int main(int argc, char **argv){
   if(socket_init() != 0){ fprintf(stderr, "socket init failed\n"); return 1; }
 

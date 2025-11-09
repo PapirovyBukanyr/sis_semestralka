@@ -17,17 +17,26 @@
 struct nn_s{
     nn_params_t params;
     size_t *neurons_per_layer;
-    size_t n_layers; // hidden layers count
+    size_t n_layers;
     h_layer_t **layers;
-    // output layer as a simple linear layer of OUTPUT_SIZE neurons
     h_layer_t *output_layer;
 };
 
+/**
+ * Create and initialize a new neural network instance.
+ *
+ * The function allocates the nn_t structure, creates hidden and output
+ * layers according to provided parameters and attempts to load saved
+ * weights from disk. On failure it returns NULL.
+ *
+ * @param p_in pointer to nn_params_t with desired configuration
+ * @return pointer to allocated nn_t or NULL on error
+ */
 nn_t* nn_create(const nn_params_t *p_in){
     nn_t* nn = (nn_t*)calloc(1,sizeof(nn_t));
     if(!nn) return NULL;
     nn->params = *p_in;
-    // default neurons per layer if not provided
+    /* default neurons per layer if not provided */
     size_t default_neurons[] = {32, 16};
     if(p_in->n_hidden_layers==0){
         nn->n_layers = 0;
@@ -50,11 +59,8 @@ nn_t* nn_create(const nn_params_t *p_in){
             prev_size = nn->neurons_per_layer[i];
         }
     }
-    // output layer
     nn->output_layer = h_layer_create(OUTPUT_SIZE, prev_size);
-    /* seed RNG early (before neuron_create in layers) so initial weights are randomized */
     srand((unsigned)time(NULL));
-    // try to load saved weights from disk; ignore errors (fresh start if missing/mismatch)
     if(nn_load_weights(nn, "data/nn_weights.bin")==0){
         LOG_INFO("[nn] loaded weights from data/nn_weights.bin\n");
     } else {
@@ -62,10 +68,16 @@ nn_t* nn_create(const nn_params_t *p_in){
     }
     return nn;
 }
-
+/**
+ * Free a neural network instance and persist weights.
+ *
+ * Attempts to save weights to disk (best-effort) and frees all allocated
+ * substructures owned by `nn`.
+ *
+ * @param nn pointer previously returned by nn_create
+ */
 void nn_free(nn_t* nn){
     if(!nn) return;
-    // try to save weights; best-effort
     if(nn_save_weights(nn, "data/nn_weights.bin")==0){
         LOG_INFO("[nn] saved weights to data/nn_weights.bin\n");
     } else {
@@ -76,13 +88,20 @@ void nn_free(nn_t* nn){
     if(nn->output_layer) h_layer_free(nn->output_layer);
     free(nn);
 }
-
-// internal forward producing normalized outputs (double array length OUTPUT_SIZE)
+/**
+ * Internal forward pass producing normalized outputs.
+ *
+ * This static helper computes the network's output values given normalized
+ * inputs and writes them into `out_norm` (length OUTPUT_SIZE).
+ *
+ * @param nn network instance
+ * @param input_norm normalized input vector length INPUT_SIZE
+ * @param out_norm preallocated output array length OUTPUT_SIZE
+ */
 static void nn_forward(nn_t* nn, const double* input_norm, double* out_norm){
     double *cur = (double*)malloc(sizeof(double)* (size_t) 1024);
     double *tmp_in = (double*)malloc(sizeof(double)* 1024);
-    // We allocate dynamically to avoid fixed max; but keep simple: allocate max 1024
-    // copy input
+    /* allocate temporary buffers (fixed max 1024 entries) and copy input */
     size_t cur_len = INPUT_SIZE;
     for(size_t i=0;i<cur_len;i++) cur[i] = input_norm[i];
     for(size_t L=0; L<nn->n_layers; L++){
@@ -98,6 +117,20 @@ static void nn_forward(nn_t* nn, const double* input_norm, double* out_norm){
     free(cur); free(tmp_in);
 }
 
+/**
+ * Predict (and optionally train) the neural network for a datapoint.
+ *
+ * The function accepts raw `data_point_t` input, normalizes it, runs a
+ * forward pass and, if `target_raw` is non-NULL, performs an online
+ * training update using `target_raw` as the desired raw outputs. After the
+ * operation the predicted (denormalized) outputs are written into `out_raw`.
+ *
+ * @param nn network instance
+ * @param in pointer to input datapoint (raw values)
+ * @param target_raw optional pointer to target raw outputs (length OUTPUT_SIZE) or NULL
+ * @param out_raw output buffer (length OUTPUT_SIZE) receiving denormalized prediction
+ * @return Euclidean cost after training if training occurred, otherwise NaN
+ */
 double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float* target_raw, float* out_raw){
     double input_norm[INPUT_SIZE];
     normalize_input(&nn->params, in, input_norm);
@@ -266,8 +299,19 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
     }
 }
 
+/**
+ * Save network weights to a binary file.
+ *
+ * The function attempts to create a parent directory (if present in the
+ * filename) and writes a simple representation of the network (layer sizes
+ * followed by per-neuron weight/bias arrays).
+ *
+ * @param nn network instance
+ * @param filename path to write the weight file
+ * @return 0 on success, -1 on error
+ */
 int nn_save_weights(nn_t* nn, const char* filename){
-    /* Ensure parent directory exists (minimal, only single-level dirs like "data/") */
+    /* Ensure parent directory exists (minimal support) */
     const char *slash = strrchr(filename, '/');
 #ifdef _WIN32
     if(!slash) slash = strrchr(filename, '\\');
@@ -295,7 +339,15 @@ int nn_save_weights(nn_t* nn, const char* filename){
     return 0;
 }
 
-/* Skip a layer stored in file: advance file pointer over one h_layer entry (neurons + each neuron's data) */
+/**
+ * Skip a serialized h_layer entry in a file.
+ *
+ * Used when the on-disk model contains more layers than the in-memory
+ * network: this helper advances the file pointer over one layer's data.
+ *
+ * @param fp open FILE* positioned at the start of an h_layer entry
+ * @return 0 on success, -1 on error
+ */
 static int skip_layer(FILE* fp){
     size_t n_neurons = 0, input_len = 0;
     if(fread(&n_neurons, sizeof(size_t), 1, fp) != 1) return -1;
@@ -310,6 +362,17 @@ static int skip_layer(FILE* fp){
     return 0;
 }
 
+/**
+ * Load network weights from a binary file into `nn` if compatible.
+ *
+ * The loader accepts files containing a prefix of hidden layers matching the
+ * in-memory network and an optional output layer. Mismatches are reported
+ * and loading fails gracefully.
+ *
+ * @param nn network instance to load into
+ * @param filename path of the weight file to read
+ * @return 0 on success (at least some layers loaded), -1 on error
+ */
 int nn_load_weights(nn_t* nn, const char* filename){
     FILE* f = fopen(filename,"rb"); if(!f) return -1;
     size_t file_n_layers = 0;

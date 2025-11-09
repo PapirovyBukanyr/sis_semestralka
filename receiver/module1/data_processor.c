@@ -1,15 +1,23 @@
-#include "data_processor.h"
-#include "parser.h"
-#include "../common.h"
-#include "../queues.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 
-// Function to process input
+#include "data_processor.h"
+#include "parser.h"
+#include "../common.h"
+#include "../queues.h"
+
+/**
+ * Process an input file line-by-line.
+ *
+ * Example utility that reads `input_file` and calls `parse_data` for each
+ * line. This helper is used during local testing and is not required for the
+ * network receiver pipeline.
+ *
+ * @param input_file path to an input text file
+ */
 void process_input(const char *input_file) {
-    // Example: Read file, parse, and convert
     FILE *file = fopen(input_file, "r");
     if (!file) {
         perror("Failed to open file");
@@ -24,25 +32,41 @@ void process_input(const char *input_file) {
     fclose(file);
 }
 
-// Function to parse raw data
+/**
+ * Parse a raw input string.
+ *
+ * This example function demonstrates how raw input could be parsed. It
+ * currently forwards the parsed content to `convert_data` for conversion.
+ *
+ * @param raw_data input string (NUL-terminated)
+ */
 void parse_data(const char *raw_data) {
-    // Example parsing logic
     printf("Parsing data: %s\n", raw_data);
-    // Call conversion after parsing
     convert_data(raw_data);
 }
 
-// Function to convert parsed data
+/**
+ * Convert parsed data into the target representation.
+ *
+ * Placeholder used by the example parsing pipeline.
+ *
+ * @param parsed_data parsed input string
+ */
 void convert_data(const char *parsed_data) {
-    // Example conversion logic
     printf("Converting data: %s\n", parsed_data);
 }
 
-/* parser.c implements parse_json_to_datapoint and helpers; we call it here. */
-
+/**
+ * Convert a JSON-like string to a data_point_t using the parser helpers.
+ *
+ * Returns 1 when at least one numeric field was present, 0 otherwise.
+ *
+ * @param s input JSON-like string
+ * @param d output datapoint
+ * @return 1 on success (some numeric data found), 0 otherwise
+ */
 int convert_json_to_datapoint(const char *s, data_point_t *d){
   parse_json_to_datapoint(s, d);
-  /* Consider success if any numeric field was found */
   if(!isnan(d->timestamp)) return 1;
   if(!isnan((double)d->export_bytes)) return 1;
   if(!isnan((double)d->export_flows)) return 1;
@@ -53,21 +77,24 @@ int convert_json_to_datapoint(const char *s, data_point_t *d){
   return 0;
 }
 
-/* Minimal preproc thread: consume raw_queue and forward lines to proc_queue.
-     This is a simple placeholder so the pipeline threads can be started and
-     messages flow to the NN thread. More advanced parsing/persistence can be
-     implemented here later. */
+/**
+ * Preprocessing thread for the pipeline.
+ *
+ * Reads raw lines from `raw_queue`, attempts to parse them into
+ * `data_point_t` and forwards either a CSV-formatted string expected by the
+ * NN thread or the original raw line to `proc_queue`.
+ *
+ * @param arg unused thread argument
+ * @return NULL
+ */
 void *preproc_thread(void *arg){
     (void)arg;
     while(1){
         char *line = queue_pop(&raw_queue);
-        if(!line) break; /* queue closed */
+        if(!line) break;
 
-        /* Parse JSON into data_point_t; if parsing fails, forward raw line for compatibility */
         data_point_t dp;
         if(convert_json_to_datapoint(line, &dp)){
-            /* Format as CSV expected by nn_thread: ts,export_bytes,export_flows,export_packets,export_rtr,export_rtt,export_srt
-               Use timestamp as integer ms if available, otherwise 0. */
             char outbuf[512];
             long long ts_ms = 0;
             if(!isnan(dp.timestamp)) ts_ms = (long long)(dp.timestamp * 1000.0);
@@ -79,11 +106,9 @@ void *preproc_thread(void *arg){
                                (double)dp.export_rtr,
                                (double)dp.export_rtt,
                                (double)dp.export_srt);
-            /* push duplicated string onto proc_queue */
             char *p = strdup(outbuf);
             if(p) queue_push(&proc_queue, p);
         } else {
-            /* fallback: forward raw line unchanged */
             queue_push(&proc_queue, line);
             free(line);
             continue;

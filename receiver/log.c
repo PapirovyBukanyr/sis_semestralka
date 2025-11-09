@@ -12,6 +12,12 @@ static CRITICAL_SECTION log_lock;
 static pthread_mutex_t log_lock = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
+/**
+ * Initialize logging subsystem resources.
+ *
+ * On Windows this initializes a CRITICAL_SECTION. On POSIX this initializes
+ * a pthread mutex. This function must be called before other logging APIs.
+ */
 void log_init(void){
 #ifdef _WIN32
     InitializeCriticalSection(&log_lock);
@@ -20,6 +26,11 @@ void log_init(void){
 #endif
 }
 
+/**
+ * Release logging subsystem resources.
+ *
+ * Cleans up the platform-specific synchronization primitives.
+ */
 void log_close(void){
 #ifdef _WIN32
     DeleteCriticalSection(&log_lock);
@@ -28,6 +39,16 @@ void log_close(void){
 #endif
 }
 
+/**
+ * Thread-safe fprintf wrapper used by the project for serialized logging.
+ *
+ * This function acquires the internal log lock, performs a vfprintf to the
+ * provided FILE* and flushes the stream. If `f` is NULL the call is a no-op.
+ *
+ * @param f FILE pointer to write to (e.g., stdout/stderr or a log file)
+ * @param fmt printf-style format string
+ * @param ... format arguments
+ */
 void log_fprintf(FILE *f, const char *fmt, ...){
     if(!f) return;
 #ifdef _WIN32
