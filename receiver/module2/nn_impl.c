@@ -9,6 +9,10 @@
 #include <time.h>
 #include <math.h>
 #include "../log.h"
+#include <sys/stat.h>
+#ifdef _WIN32
+#include <direct.h>
+#endif
 
 struct nn_s{
     nn_params_t params;
@@ -51,8 +55,8 @@ nn_t* nn_create(const nn_params_t *p_in){
     /* seed RNG early (before neuron_create in layers) so initial weights are randomized */
     srand((unsigned)time(NULL));
     // try to load saved weights from disk; ignore errors (fresh start if missing/mismatch)
-    if(nn_load_weights(nn, "nn_weights.bin")==0){
-        LOG_INFO("[nn] loaded weights from nn_weights.bin\n");
+    if(nn_load_weights(nn, "data/nn_weights.bin")==0){
+        LOG_INFO("[nn] loaded weights from data/nn_weights.bin\n");
     } else {
         LOG_INFO("[nn] no weight file loaded (starting with random weights)\n");
     }
@@ -62,10 +66,10 @@ nn_t* nn_create(const nn_params_t *p_in){
 void nn_free(nn_t* nn){
     if(!nn) return;
     // try to save weights; best-effort
-    if(nn_save_weights(nn, "nn_weights.bin")==0){
-        LOG_INFO("[nn] saved weights to nn_weights.bin\n");
+    if(nn_save_weights(nn, "data/nn_weights.bin")==0){
+        LOG_INFO("[nn] saved weights to data/nn_weights.bin\n");
     } else {
-        LOG_ERROR("[nn] failed to save weights to nn_weights.bin\n");
+        LOG_ERROR("[nn] failed to save weights to data/nn_weights.bin\n");
     }
     if(nn->neurons_per_layer) free(nn->neurons_per_layer);
     if(nn->layers){ for(size_t i=0;i<nn->n_layers;i++) h_layer_free(nn->layers[i]); free(nn->layers); }
@@ -245,7 +249,7 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
         /* denormalize updated outputs into out_raw */
         denormalize_output(&nn->params, out_norm, out_raw);
 
-        nn_save_weights(nn, "nn_weights.bin");
+    nn_save_weights(nn, "data/nn_weights.bin");
 
         free(deltas);
         free(acts);
@@ -263,6 +267,22 @@ double nn_predict_and_maybe_train(nn_t* nn, const data_point_t* in, const float*
 }
 
 int nn_save_weights(nn_t* nn, const char* filename){
+    /* Ensure parent directory exists (minimal, only single-level dirs like "data/") */
+    const char *slash = strrchr(filename, '/');
+#ifdef _WIN32
+    if(!slash) slash = strrchr(filename, '\\');
+#endif
+    if(slash){
+        size_t dlen = (size_t)(slash - filename);
+        if(dlen > 0){ char dir[512]; if(dlen < sizeof(dir)){ memcpy(dir, filename, dlen); dir[dlen]=0;
+#ifdef _WIN32
+                    _mkdir(dir);
+#else
+                    mkdir(dir, 0755);
+#endif
+                }
+        }
+    }
     FILE* f = fopen(filename,"wb"); if(!f) return -1;
     // write header: n_layers, neurons_per_layer
     if(fwrite(&nn->n_layers,sizeof(size_t),1,f)!=1) { fclose(f); return -1; }
@@ -275,21 +295,74 @@ int nn_save_weights(nn_t* nn, const char* filename){
     return 0;
 }
 
+/* Skip a layer stored in file: advance file pointer over one h_layer entry (neurons + each neuron's data) */
+static int skip_layer(FILE* fp){
+    size_t n_neurons = 0, input_len = 0;
+    if(fread(&n_neurons, sizeof(size_t), 1, fp) != 1) return -1;
+    if(fread(&input_len, sizeof(size_t), 1, fp) != 1) return -1;
+    for(size_t ni=0; ni<n_neurons; ni++){
+        size_t in_len = 0;
+        if(fread(&in_len, sizeof(size_t), 1, fp) != 1) return -1;
+        /* skip weights (double * in_len) and bias (double) */
+        long toskip = (long)(sizeof(double) * in_len + sizeof(double));
+        if(fseek(fp, toskip, SEEK_CUR) != 0) return -1;
+    }
+    return 0;
+}
+
 int nn_load_weights(nn_t* nn, const char* filename){
     FILE* f = fopen(filename,"rb"); if(!f) return -1;
-    size_t file_n_layers=0;
-    if(fread(&file_n_layers,sizeof(size_t),1,f)!=1){ fclose(f); return -1; }
-    if(file_n_layers != nn->n_layers){ fclose(f); return -1; }
-    for(size_t i=0;i<nn->n_layers;i++){
-        size_t nloc=0; if(fread(&nloc,sizeof(size_t),1,f)!=1){ fclose(f); return -1; }
-        // put back to stream pointer
-        fseek(f, -((long)sizeof(size_t)), SEEK_CUR);
-        if(nloc != nn->neurons_per_layer[i]){ fclose(f); return -1; }
+    size_t file_n_layers = 0;
+    if(fread(&file_n_layers, sizeof(size_t), 1, f) != 1){ fclose(f); return -1; }
+
+    /* read neurons_per_layer array from file */
+    size_t *file_neurons = NULL;
+    if(file_n_layers > 0){
+        file_neurons = (size_t*)malloc(sizeof(size_t) * file_n_layers);
+        if(!file_neurons){ fclose(f); return -1; }
+        if(fread(file_neurons, sizeof(size_t), file_n_layers, f) != file_n_layers){ free(file_neurons); fclose(f); return -1; }
     }
-    // rewind to start of layers after header
-    fseek(f, sizeof(size_t)*(1+nn->n_layers), SEEK_SET);
-    for(size_t i=0;i<nn->n_layers;i++) if(h_layer_read(f, nn->layers[i])!=0){ fclose(f); return -1; }
-    if(h_layer_read(f, nn->output_layer)!=0){ fclose(f); return -1; }
+
+    /* Log diagnostics */
+    LOG_INFO("[nn] weights file: hidden_layers_in_file=%zu, expected=%zu\n", file_n_layers, nn->n_layers);
+    for(size_t i=0;i<file_n_layers;i++) LOG_INFO("[nn] file layer %zu neurons=%zu\n", i, file_neurons[i]);
+
+    /* Determine how many hidden layers we can load (prefix match) */
+    size_t prefix = (file_n_layers < nn->n_layers) ? file_n_layers : nn->n_layers;
+    for(size_t i=0;i<prefix;i++){
+        if(file_neurons[i] != nn->neurons_per_layer[i]){
+            LOG_ERROR("[nn] layer size mismatch at index %zu: file=%zu expected=%zu\n", i, file_neurons[i], nn->neurons_per_layer[i]);
+            free(file_neurons); fclose(f); return -1;
+        }
+    }
+
+    /* helper to skip an unrelated layer in the file (reads structure and advances file ptr) */
+    /* implemented as file-scope static skip_layer() above */
+
+    /* Now read hidden layers: for file layers, if they map to our nn->layers read into them; else skip */
+    for(size_t i=0;i<file_n_layers;i++){
+        if(i < nn->n_layers){
+            if(h_layer_read(f, nn->layers[i]) != 0){ free(file_neurons); fclose(f); return -1; }
+        } else {
+            if(skip_layer(f) != 0){ free(file_neurons); fclose(f); return -1; }
+        }
+    }
+
+    /* attempt to read output layer from file; only accept if its sizes match */
+    int output_loaded = 0;
+    if(h_layer_read(f, nn->output_layer) == 0){
+        output_loaded = 1;
+    } else {
+        LOG_INFO("[nn] output layer in file did not match expected output layer; leaving random output layer\n");
+        /* not fatal; we may still have loaded hidden layers */
+    }
+
+    free(file_neurons);
     fclose(f);
-    return 0;
+
+    if(prefix > 0 || output_loaded) {
+        LOG_INFO("[nn] loaded %zu hidden layers from file (output_loaded=%d)\n", prefix, output_loaded);
+        return 0;
+    }
+    return -1;
 }

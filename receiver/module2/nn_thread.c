@@ -15,7 +15,8 @@ void* nn_thread(void *arg){
     nn_params_t params = default_nn_params();
     nn_t* nn = nn_create(&params);
     if(!nn){ LOG_ERROR("nn_create failed\n"); return NULL; }
-    nn_load_weights(nn, "receiver/module2/nn_weights.bin");
+    /* load saved weights from canonical data directory if present */
+    nn_load_weights(nn, "data/nn_weights.bin");
 
     int has_prev = 0;
     data_point_t prev_dp;

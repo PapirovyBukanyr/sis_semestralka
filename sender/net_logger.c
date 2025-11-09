@@ -117,7 +117,7 @@ int main(int argc, char **argv){
   int append_source = 0;
   int json_mode = 0;
   const char *json_path = NULL;
-  double rate = 10000; /* packets per second for json mode */
+  double rate = 1; /* packets per second for json mode */
   const char *src = "data";
   for(int i=1;i<argc;i++){
     if(strcmp(argv[i], "-a")==0 || strcmp(argv[i], "--accel")==0){ if(i+1<argc) { accel = atof(argv[++i]); continue; } }

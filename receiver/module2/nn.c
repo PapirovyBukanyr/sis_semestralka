@@ -243,8 +243,8 @@ int main(){
 
     nn_t* nn = nn_create(&params);
     if(!nn){ LOG_ERROR("Failed to create network\n"); return 1; }
-    // try load existing weights, if not present it's fine
-    if(nn_load_weights(nn, "nn_weights.bin")!=0) LOG_INFO("No weights loaded, starting from random init\n");
+    // try load existing weights from data/ directory, if not present it's fine
+    if(nn_load_weights(nn, "data/nn_weights.bin")!=0) LOG_INFO("No weights loaded, starting from random init\n");
 
     // Example usage: create a dummy data_point and run prediction
     data_point_t dp = {0};
