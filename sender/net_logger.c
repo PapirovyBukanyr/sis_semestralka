@@ -143,7 +143,7 @@ int main(int argc, char **argv){
   /* 
   packets per second for json mode, for learning is good 2, for reading in real-time 0.2 
   */
-  double rate = 0.2; 
+  double rate = 1; 
   
   const char *src = "data";
   for(int i=1;i<argc;i++){

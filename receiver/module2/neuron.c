@@ -13,6 +13,36 @@
 
 #include "neuron.h"
 
+/** Apply activation function.
+ * 
+ * @param z pre-activation value
+ * @param a activation function type
+ * @return activated value
+ */
+static double activate(double z, act_t a){
+	switch(a){
+		case ACT_SIGMOID:{ double s = 1.0/(1.0+exp(-z)); return s; }
+		case ACT_RELU: return z > 0.0 ? z : 0.0;
+		case ACT_TANH: return tanh(z);
+		default: return z; /* ACT_LINEAR */
+	}
+}
+
+/** Compute derivative of activation function at z.
+ * 
+ * @param z pre-activation value
+ * @param a activation function type
+ * @return derivative value
+ */
+static double activate_derivative(double z, act_t a){
+	switch(a){
+		case ACT_SIGMOID:{ double s = 1.0/(1.0+exp(-z)); return s*(1.0-s); }
+		case ACT_RELU: return z > 0.0 ? 1.0 : 0.0;
+		case ACT_TANH:{ double t = tanh(z); return 1.0 - t*t; }
+		default: return 1.0; /* ACT_LINEAR */
+	}
+}
+
 /**
  * Generate a random double in [-1.0, 1.0]
  * 
@@ -35,6 +65,8 @@ if(!n->w){ free(n); return NULL; }
 // init small random weights
 for(size_t i=0;i<in_len;i++) n->w[i] = drand_unit()*0.1;
 n->b = drand_unit()*0.1;
+	n->act = ACT_LINEAR;
+	n->last_z = 0.0;
 return n;
 }
 
@@ -50,11 +82,12 @@ void neuron_free(neuron_t* n){ if(!n) return; free(n->w); free(n); }
  * @param input input array of length n->in_len
  * @return output value
  */
-double neuron_forward(const neuron_t* n, const double* input){
-	double s = 0.0;
-	for(size_t i=0;i<n->in_len;i++) s += n->w[i] * input[i];
-	s += n->b;
-	return s; /* linear */
+double neuron_forward(neuron_t* n, const double* input){
+	double z = 0.0;
+	for(size_t i=0;i<n->in_len;i++) z += n->w[i] * input[i];
+	z += n->b;
+	n->last_z = z; /* store for derivative */
+	return activate(z, n->act);
 }
 
 /**
@@ -66,11 +99,13 @@ double neuron_forward(const neuron_t* n, const double* input){
  * @param lr learning rate
  */
 void neuron_update(neuron_t* n, const double* input, double grad_out, double lr){
+	double dact = activate_derivative(n->last_z, n->act);
+	double grad_pre = grad_out * dact; /* dL/dz */
 	for(size_t i=0;i<n->in_len;i++){
-		double g = grad_out * input[i];
+		double g = grad_pre * input[i];
 		n->w[i] -= lr * g;
 	}
-	n->b -= lr * grad_out;
+	n->b -= lr * grad_pre;
 }
 
 /**
@@ -84,6 +119,9 @@ int neuron_write(FILE* f, const neuron_t* n){
 	if(fwrite(&n->in_len,sizeof(size_t),1,f)!=1) return -1;
 	if(fwrite(n->w,sizeof(double),n->in_len,f)!=n->in_len) return -1;
 	if(fwrite(&n->b,sizeof(double),1,f)!=1) return -1;
+	/* write activation as int */
+	int a = (int)n->act;
+	if(fwrite(&a,sizeof(int),1,f)!=1) return -1;
 	return 0;
 }
 
@@ -100,5 +138,9 @@ int neuron_read(FILE* f, neuron_t* n){
 	if(in_len != n->in_len) return -1; /* mismatch */
 	if(fread(n->w,sizeof(double),n->in_len,f)!=n->in_len) return -1;
 	if(fread(&n->b,sizeof(double),1,f)!=1) return -1;
+	/* read activation */
+	int a = 0;
+	if(fread(&a,sizeof(int),1,f)!=1) return -1;
+	n->act = (act_t)a;
 	return 0;
 }

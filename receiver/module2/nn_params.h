@@ -8,6 +8,7 @@
 #define NN_PARAMS_H
 
 #include <stddef.h>
+#include "neuron.h"
 #define INPUT_SIZE 6
 #define OUTPUT_SIZE 6
 
@@ -24,6 +25,8 @@ typedef struct {
     size_t *neurons_per_layer; 
     double learning_rate;
     double scales[INPUT_SIZE]; 
+    act_t hidden_activation;
+    act_t output_activation;
 } nn_params_t;
 
 nn_params_t default_nn_params();

@@ -33,6 +33,8 @@ nn_params_t default_nn_params(){
     p.scales[3] = 28.47470817; 
     p.scales[4] = 865677.7584; 
     p.scales[5] = 4782337.7; 
+    p.hidden_activation = ACT_SIGMOID;
+    p.output_activation = ACT_RELU;
 
     return p;
 }

@@ -78,10 +78,22 @@ nn_t* nn_create(const nn_params_t *p_in){
         nn->layers = (h_layer_t**)malloc(sizeof(h_layer_t*)*nn->n_layers);
         for(size_t i=0;i<nn->n_layers;i++){
             nn->layers[i] = h_layer_create(nn->neurons_per_layer[i], prev_size);
+            /* set activation for neurons in this hidden layer from params */
+            if(nn->layers[i]){
+                for(size_t nj=0; nj<nn->layers[i]->n_neurons; nj++){
+                    if(nn->layers[i]->neurons[nj]) nn->layers[i]->neurons[nj]->act = nn->params.hidden_activation;
+                }
+            }
             prev_size = nn->neurons_per_layer[i];
         }
     }
     nn->output_layer = h_layer_create(OUTPUT_SIZE, prev_size);
+    /* set activation for output neurons */
+    if(nn->output_layer){
+        for(size_t oj=0; oj<nn->output_layer->n_neurons; oj++){
+            if(nn->output_layer->neurons[oj]) nn->output_layer->neurons[oj]->act = nn->params.output_activation;
+        }
+    }
     srand((unsigned)time(NULL));
     if(nn_load_weights(nn, "data/nn_weights.bin")==0){
         LOG_INFO("[nn] loaded weights from data/nn_weights.bin\n");

@@ -2,6 +2,15 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [Unreleased] - 2025-11-11
+### Added
+
+### Changed
+- Added multiple activation functions (sigmoid, relu) to neurons.
+- Updated neural network to use specified activation functions for hidden and output layers.
+
+### Removed
+
 # 1.0.0 - 2025-11-09
 First stable release of the neural network project.
 
