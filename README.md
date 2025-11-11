@@ -17,7 +17,10 @@ Myšlenka je vytvořit robustní a efektivní nástroj, který umožní monitoro
   - `module2/` - modul pro předzpracování dat
   - `module3/` - modul pro analýzu nadcházejících dat pomocí jednoduchých algoritmů
   - `module4/` - modul pro vizualizaci dat
-- `sender/` - modul pro odesílání síťových logů
+- `sender/` - program pro odesílání síťových logů
+- `data/` - data, se kterými bylo pracováno
+- `bin/` - složka s .exe soubory připravenými ke spuštění
+- `tools/` - složka s užitečnými nástroji, aktuálně se tam nachází nástroj na generování dokumentace
 
 ## Využití neuronové sítě v praxi
 Síť se průběžně učí z nových dat a je navržena pro zařízení s omezenými zdroji. Implementoval jsem ji jako svou knihovnu pro ESP8266. Na základě routerových logů dokáže předpovídat blížící se problémy s připojením s dostatečným předstihem.
