@@ -249,7 +249,7 @@ Declarations for the hidden layer structure and functions used in module2.
 
 | Module | Functions |
 |---|---|
-| module2 | <stdlib.h>, drand_unit, neuron_create, neuron_forward, neuron_free, neuron_read, neuron_update, neuron_write |
+| module2 | <stdlib.h>, activate, activate_derivative, drand_unit, neuron_create, neuron_forward, neuron_free, neuron_read, neuron_update, neuron_write |
 
 #### <stdlib.h>
 
@@ -259,6 +259,24 @@ neuron.c
 
 Neuron implementation: activation, parameter storage, serialization and
 helper functions used by the hidden-layer implementation.
+```
+
+#### activate
+
+
+```text
+@param z pre-activation value
+@param a activation function type
+@return activated value
+```
+
+#### activate_derivative
+
+
+```text
+@param z pre-activation value
+@param a activation function type
+@return derivative value
 ```
 
 #### drand_unit
@@ -337,7 +355,7 @@ Write a neuron to a file.
 
 | Module | Functions |
 |---|---|
-| module2 | NEURON_H |
+| module2 | NEURON_H, { |
 
 #### NEURON_H
 
@@ -347,6 +365,32 @@ neuron.h
 
 Declarations for the neuron structure and functions used in module2.
 ```
+
+#### {
+
+
+```text
+neuron_t
+- in_len: number of inputs
+- w: weight array of length in_len
+- b: bias
+- act: activation function used by the neuron
+- last_z: last pre-activation value (z = w·x + b), stored for gradient computation
+```
+
+### receiver/module2/neuron_layer.c
+
+
+| Module | Functions |
+|---|---|
+| module2 |  |
+
+### receiver/module2/neuron_layer.h
+
+
+| Module | Functions |
+|---|---|
+| module2 |  |
 
 ### receiver/module2/nn.c
 
@@ -680,9 +724,7 @@ Declarations for the representation thread in module3.
 ```text
 Simple ASCII dashboard UI.
 
-Periodically (every second) redraws a small status panel showing queue
-lengths and the last error message. Errors are consumed via a non-blocking
-pop so they are logged and shown but do not block the display refresh.
+arg: unused thread argument
 ```
 
 ### receiver/module4/ui.h
