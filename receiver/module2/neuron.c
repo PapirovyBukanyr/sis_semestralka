@@ -135,12 +135,18 @@ int neuron_write(FILE* f, const neuron_t* n){
 int neuron_read(FILE* f, neuron_t* n){
 	size_t in_len=0;
 	if(fread(&in_len,sizeof(size_t),1,f)!=1) return -1;
-	if(in_len != n->in_len) return -1; /* mismatch */
-	if(fread(n->w,sizeof(double),n->in_len,f)!=n->in_len) return -1;
+	if(n->in_len != in_len){
+		double* neww = (double*)malloc(sizeof(double)*in_len);
+		if(!neww) return -1;
+		free(n->w);
+		n->w = neww;
+		n->in_len = in_len;
+	}
+	if(fread(n->w,sizeof(double),in_len,f)!=in_len) return -1;
 	if(fread(&n->b,sizeof(double),1,f)!=1) return -1;
-	/* read activation */
 	int a = 0;
 	if(fread(&a,sizeof(int),1,f)!=1) return -1;
 	n->act = (act_t)a;
+	n->last_z = 0.0;
 	return 0;
 }

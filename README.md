@@ -22,6 +22,15 @@ Myšlenka je vytvořit robustní a efektivní nástroj, který umožní monitoro
 - `bin/` - složka s .exe soubory připravenými ke spuštění
 - `tools/` - složka s užitečnými nástroji, aktuálně se tam nachází nástroj na generování dokumentace
 
+## Jak to vypadá při provozu
+
+Při provozu to samo o sobě nevypadá nijak zvláště zajímavě, neboť byl kladen důraz na efektivitu a nízkou zátěž systému. Proto mi bylo proti srsti implementovat i propojení i s LLM, neboť to zbytečně vyžaduje síťovou komunikaci navíc. Také to buď přestane být lokální řešení (citlivá data se budou toulat světem) nebo to bude vyžadovat další hardware (lokální LLM). Nicméně pro demonstrační účely jsem přidal jednoduchou integraci s OpenAI API, která je implementována v modulu `receiver/module3`. Při spuštění programu se v konzoli vypisují logy, které přicházejí ze senderu, následně jsou předzpracovány a nakonec je odeslán dotaz na OpenAI API, které vrátí odpověď. Ta je označena prefixem `[LLM]`. 
+
+Defaultně je vypnutá ze dvou důvodů. První je vznešený, neb chci se maximálně přiblížit původnímu záměru. Sekundární je zabezpečení proti nechtěnému vyčerpání kreditů na OpenAI API. Neboť v softwaru mám zkompilované exe soubory, za pomoci aplikace proximan by někdo snadno mohl přijít k API klíči. Do budoucna by to chtělo vymyslet jak to ošetřit lépe.
+
+![How it works](data/image.png)
+
+
 ## Využití neuronové sítě v praxi
 Síť se průběžně učí z nových dat a je navržena pro zařízení s omezenými zdroji. Implementoval jsem ji jako svou knihovnu pro ESP8266. Na základě routerových logů dokáže předpovídat blížící se problémy s připojením s dostatečným předstihem.
 Níže je fotografie použitého zařízení:

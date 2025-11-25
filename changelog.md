@@ -4,6 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased] - 2025-11-11
 ### Added
+- Added OpenAI LLM integration for the representation module (`receiver/module3`).
+    - New files: `receiver/module3/openai_client.h`, `receiver/module3/openai_client.c`.
+    - `receiver/module3/represent.c` now sends queued lines to the OpenAI Chat
+        Completions API and logs the assistant reply as `[LLM] ...`.
+    - Requires `libcurl` at link time and an environment variable `OPENAI_API_KEY`.
+    - This is a minimal, lightweight integration; consider adding a JSON
+        library (e.g. `cJSON`) and making calls asynchronous for production use.
 
 ### Changed
 - Added multiple activation functions (sigmoid, relu) to neurons.

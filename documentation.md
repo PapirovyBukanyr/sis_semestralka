@@ -399,6 +399,24 @@ neuron_t
 |---|---|
 | module2 |  |
 
+## OpenAI integration
+
+The representation module (`receiver/module3/represent.c`) can optionally send
+text to an OpenAI-compatible LLM to ask for interpretations of pipeline
+messages. This uses a minimal client implemented in
+`receiver/module3/openai_client.c` which depends on `libcurl`.
+
+- Environment: set `OPENAI_API_KEY` to your API key.
+- Build: link with `libcurl` (example: add `-lcurl` to your linker flags).
+- Example usage: the representation thread will call the client for every
+	queued line and log the assistant reply as `[LLM] ...`.
+
+Notes:
+- The implementation performs simple string-based JSON extraction and is
+	intentionally lightweight. For production usage consider a proper JSON
+	parser (e.g. `cJSON`) and robust error handling.
+
+
 ### receiver/module2/nn.h
 
 
